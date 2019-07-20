@@ -28,6 +28,7 @@ class MainWindow(QWidget):
 if __name__ == '__main__':
     context = ApplicationContext()       # 1. Instantiate ApplicationContext
     stylesheet = context.get_resource('styles.qss')
+    print(context.app.getStyle())
     context.app.setStyleSheet(open(stylesheet).read())
     window = MainWindow()
     window.show()

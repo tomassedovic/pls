@@ -35,4 +35,10 @@ It's a GPL'd cross-platform GUI development kit using Python and Qt.
 
 ### Building a Windows executable
 
-??? TODO
+NOTE: `fbs freeze` should work here as well. It's only the installer that
+requires NSIS.
+
+https://build-system.fman.io/pyqt-exe-creation/
+
+Unfortunately, this does need a Windows system as well. Sigh. I should get a VM
+and try it out though. Shouldn't be terrible.
