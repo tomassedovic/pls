@@ -2,7 +2,7 @@
 
 ## GUI Development and Deployment Notes
 
-`pls` uses `fbs`, the fman build system: 
+`pls` uses `fbs`, the fman build system:
 
 https://build-system.fman.io/
 
@@ -33,3 +33,6 @@ It's a GPL'd cross-platform GUI development kit using Python and Qt.
     $ gem install -N fpm
     $ fbs installer
 
+### Building a Windows executable
+
+??? TODO
