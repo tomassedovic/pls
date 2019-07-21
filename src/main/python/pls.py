@@ -2,6 +2,7 @@ import configparser
 from enum import Enum, auto
 import os
 from pathlib import Path
+import platform
 import re
 import subprocess
 import sys
@@ -17,13 +18,24 @@ def list_sorted_files(directory_path):
 
 
 def config_file_location():
-    xdg_config_home = os.environ.get('XDG_CONFIG_HOME')
-    if xdg_config_home:
-        base_path = Path(xdg_config_home)
+    system = platform.system()
+    if system == 'Linux':
+        xdg_config_home = os.environ.get('XDG_CONFIG_HOME')
+        if xdg_config_home:
+            base_path = Path(xdg_config_home)
+        else:
+            base_path = Path.home() / '.config'
+        config_path = base_path / 'pls' / 'pls.toml'
+        return config_path
+    elif system == 'Windows':
+        appdata = os.environ['APPDATA']
+        base_path = Path(appdata)
+        config_path = base_path / 'pls' / 'pls.toml'
+        return config_path
+    elif system == 'Darwin':
+        raise NotImplementedError("macOS systems are not supported yet")
     else:
-        base_path = Path.home() / '.config'
-    config_path = base_path / 'pls' / 'pls.toml'
-    return config_path
+        raise NotImplementedError("Unknown platform {}".format(system))
 
 
 def load_config_file(config_path):
