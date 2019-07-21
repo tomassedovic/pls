@@ -180,7 +180,7 @@ class Pls():
     def __init__(self):
         pass
 
-    def info(self, series_name):
+    def series(self, series_name):
         series_id = series_name.lower()
         config_path = config_file_location()
         ensure_config_directory_exists(config_path)
@@ -190,21 +190,21 @@ class Pls():
         assert config_path.parent.is_dir()
         config = load_config_file(config_path)
 
-        info = Info()
-        info.series_name = series_name
-        info.series_id = series_id
-        info.location = config[series_id]['directory']
-        info.prev_path = last_played_file(config, series_id)
-        info.next_path = file_to_play(config, series_id)
-        return info
+        series = Series()
+        series.name = series_name
+        series.id = series_id
+        series.location = config[series_id]['directory']
+        series.prev_path = last_played_file(config, series_id)
+        series.next_path = file_to_play(config, series_id)
+        return series
 
     def replay_last_watched(self, series_name):
-        path = self.info(series_name).prev_path
+        path = self.series(series_name).prev_path
         play_file(path)
 
     def play_next(self, series_name):
         pass
 
 
-class Info():
+class Series():
     pass
