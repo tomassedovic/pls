@@ -201,6 +201,7 @@ class Pls():
         assert config_path.parent.exists()
         assert config_path.parent.is_dir()
         config = load_config_file(config_path)
+        print(repr(config.sections()))
 
         series = Series()
         series.name = series_name
