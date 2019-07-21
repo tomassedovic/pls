@@ -20,11 +20,11 @@ class MainWindow(QWidget):
         self.next_file_label.setText("Next:")
 
         self.play_last = QPushButton("Play Last")
-        self.play_last.clicked.connect(lambda: self.text.setText("TODO Play Last"))
+        self.play_last.clicked.connect(self.play_last_action)
         self.play_last.setObjectName("play_last")
 
-        self.play_next = QPushButton("Play Next")
-        self.play_next.clicked.connect(lambda: self.text.setText("TODO Play Next"))
+        self.play_next = QPushButton("Play Next\nLOL")
+        self.play_next.clicked.connect(self.play_next_action)
         self.play_next.setObjectName("play_next")
 
         layout = QVBoxLayout()
@@ -36,6 +36,25 @@ class MainWindow(QWidget):
         #layout.setAlignment(self.play_last, Qt.AlignHCenter)
         #layout.setAlignment(self.play_next, Qt.AlignHCenter)
         self.setLayout(layout)
+        self.refresh_labels()
+
+    def play_next_action(self):
+        self.refresh_labels()
+
+    def play_last_action(self):
+        config_path = pls.config_file_location()
+        pls.ensure_config_directory_exists(config_path)
+        # TODO: create the config file as well, not just the dir
+
+        assert config_path.parent.exists()
+        assert config_path.parent.is_dir()
+        config = pls.load_config_file(config_path)
+
+        # TODO: make the series configurable from CLI
+        series = 'Bleach'
+
+        path = pls.last_played_file(config, series)
+        pls.play_file(path)
         self.refresh_labels()
 
     def refresh_labels(self):
@@ -57,6 +76,9 @@ class MainWindow(QWidget):
 
         next_path = pls.file_to_play(config, series)
         self.next_file_label.setText("Next: {}".format(next_path.name))
+
+        self.play_last.setText("Replay last:\n{}".format(prev_path.name))
+        self.play_next.setText("Play next:\n{}".format(next_path.name))
 
 
 if __name__ == '__main__':

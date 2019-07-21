@@ -96,7 +96,7 @@ def last_played_file(config, series):
 
 def play_file(file_path):
     # NOTE: `xdg-open` returns immediately
-    result = subprocess.run(("xdg-open", path))
+    result = subprocess.run(("xdg-open", file_path))
     if result.returncode != 0:
         print("Error playing video:\n", result)
 
