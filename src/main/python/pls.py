@@ -47,11 +47,14 @@ def set_next(config, series, filename):
     series = series.lower()
     config[series]['next'] = filename
 
+def series_directory(config, series):
+    series = series.lower()
+    return config[series]['directory']
+
 def file_to_play(config, series):
     series = series.lower()
-    current_directory = config[series]['directory']
     current_filename = config[series]['next']
-    return Path(current_directory) / current_filename
+    return Path(series_directory(config, series)) / current_filename
 
 
 def next_file_to_play(config, series):
@@ -171,3 +174,37 @@ def run():
     elif action == Action.SHOW_LAST:
         path = last_played_file(config, series)
         print(path)
+
+
+class Pls():
+    def __init__(self):
+        pass
+
+    def info(self, series_name):
+        series_id = series_name.lower()
+        config_path = config_file_location()
+        ensure_config_directory_exists(config_path)
+        # TODO: create the config file as well, not just the dir
+
+        assert config_path.parent.exists()
+        assert config_path.parent.is_dir()
+        config = load_config_file(config_path)
+
+        info = Info()
+        info.series_name = series_name
+        info.series_id = series_id
+        info.location = config[series_id]['directory']
+        info.prev_path = last_played_file(config, series_id)
+        info.next_path = file_to_play(config, series_id)
+        return info
+
+    def replay_last_watched(self, series_name):
+        path = self.info(series_name).prev_path
+        play_file(path)
+
+    def play_next(self, series_name):
+        pass
+
+
+class Info():
+    pass

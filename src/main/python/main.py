@@ -11,6 +11,8 @@ import pls
 class MainWindow(QWidget):
     def __init__(self):
         super().__init__()
+        self.pls = pls.Pls()
+
         self.text = QLabel()
         self.text.setWordWrap(True)
 
@@ -29,8 +31,8 @@ class MainWindow(QWidget):
 
         layout = QVBoxLayout()
         layout.addWidget(self.text)
-        layout.addWidget(self.previous_file_label)
-        layout.addWidget(self.next_file_label)
+        #layout.addWidget(self.previous_file_label)
+        #layout.addWidget(self.next_file_label)
         layout.addWidget(self.play_last)
         layout.addWidget(self.play_next)
         #layout.setAlignment(self.play_last, Qt.AlignHCenter)
@@ -42,43 +44,15 @@ class MainWindow(QWidget):
         self.refresh_labels()
 
     def play_last_action(self):
-        config_path = pls.config_file_location()
-        pls.ensure_config_directory_exists(config_path)
-        # TODO: create the config file as well, not just the dir
-
-        assert config_path.parent.exists()
-        assert config_path.parent.is_dir()
-        config = pls.load_config_file(config_path)
-
-        # TODO: make the series configurable from CLI
-        series = 'Bleach'
-
-        path = pls.last_played_file(config, series)
-        pls.play_file(path)
+        self.pls.replay_last_watched('Bleach')
         self.refresh_labels()
 
     def refresh_labels(self):
-        config_path = pls.config_file_location()
-        pls.ensure_config_directory_exists(config_path)
-        # TODO: create the config file as well, not just the dir
-
-        assert config_path.parent.exists()
-        assert config_path.parent.is_dir()
-        config = pls.load_config_file(config_path)
-
-        # TODO: make the series configurable from CLI
-        series = 'Bleach'
-
-        self.text.setText("Series: {}".format(series))
-
-        prev_path = pls.last_played_file(config, series)
-        self.previous_file_label.setText("Last played: {}".format(prev_path.name))
-
-        next_path = pls.file_to_play(config, series)
-        self.next_file_label.setText("Next: {}".format(next_path.name))
-
-        self.play_last.setText("Replay last:\n{}".format(prev_path.name))
-        self.play_next.setText("Play next:\n{}".format(next_path.name))
+        info = self.pls.info('Bleach')
+        self.text.setText(
+            "Series: {}\nLocation: {}".format(info.series_name, info.location))
+        self.play_last.setText("Replay last watched:\n{}".format(info.prev_path.name))
+        self.play_next.setText("Play next:\n{}".format(info.next_path.name))
 
 
 if __name__ == '__main__':
