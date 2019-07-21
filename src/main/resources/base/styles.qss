@@ -1,9 +1,9 @@
 QLabel {
-    min-width: 20em;
-    max-width: 30em;
-    min-height: 7em;
+  min-width: 20em;
+  max-width: 30em;
 }
 
-QPushButton {
-    max-width: 10em;
+QPushButton#play_next {
+  color: blue;
+  padding: 1em 3em;
 }
