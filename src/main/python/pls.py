@@ -35,7 +35,7 @@ def config_file_location():
     elif system == 'Darwin':
         raise NotImplementedError("macOS systems are not supported yet")
     else:
-        raise NotImplementedError("Unknown platform {}".format(system))
+        raise NotImplementedError(f"Unknown platform {system}")
 
 
 def load_config_file(config_path):
@@ -62,10 +62,12 @@ def set_next(config, series, filename):
 def series_directory(config, series):
     series = series.lower()
     hostname = platform.node().lower()
-    hostname_dir_key = 'directory_{}'.format(hostname)
+    hostname_dir_key = f'directory_{hostname}'
     try:
+        print(f"Looking for directory under '{hostname_dir_key}'")
         return config[series][hostname_dir_key]
     except KeyError:
+        print(f"Not found. Falling back to 'directory'")
         return config[series]['directory']
 
 def file_to_play(config, series):
@@ -83,8 +85,8 @@ def next_file_to_play(config, series):
     try:
         current_index = all_files.index(current_filename)
     except ValueError:
-        sys.exit("File {} not found in {}.\nAborting.".format(
-            current_filename, current_directory))
+        sys.exit(
+            f"File {current_filename} not found in {current_directory}.\nAborting.")
 
     try:
         next_filename = all_files[current_index + 1]
@@ -103,8 +105,7 @@ def last_played_file(config, series):
     try:
         current_index = all_files.index(next_filename)
     except ValueError:
-        sys.exit("File {} not found in {}.\nAborting.".format(
-            next_filename, current_directory))
+        sys.exit(f"File {next_filename} not found in {current_directory}.\nAborting.")
 
     try:
         last_played_filename = all_files[current_index - 1]
@@ -126,7 +127,7 @@ def play_file(file_path):
     elif system == 'Darwin':
         raise NotImplementedError("macOS systems are not supported yet")
     else:
-        raise NotImplementedError("Unknown platform {}".format(system))
+        raise NotImplementedError(f"Unknown platform {system}")
 
 
 def save_config(config, config_path):
@@ -162,9 +163,10 @@ def run():
             print(USAGE)
             sys.exit(0)
         else:
-            sys.exit("Unknown command line option: '{}'".format(cli_option))
+            sys.exit(f"Unknown command line option: '{cli_option}'")
     else:
-        sys.exit("Incorrect number of command line arguments: {}".format(len(sys.argv) - 1))
+        sys.exit(
+            f"Incorrect number of command line arguments: {len(sys.argv) - 1}")
 
     config_path = config_file_location()
     ensure_config_directory_exists(config_path)

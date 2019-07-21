@@ -50,10 +50,10 @@ class MainWindow(QWidget):
     def refresh_labels(self):
         series = self.pls.series('Bleach')
         self.text.setText(
-            "Series: {}\nLocation: {}".format(series.name, series.location))
+            f"Series: {series.name}\nLocation: {series.location}")
         self.play_last.setText(
-            "Replay last watched:\n{}".format(series.last_watched_episode_path.name))
-        self.play_next.setText("Play next:\n{}".format(series.next_episode_path.name))
+            f"Replay last watched:\n{series.last_watched_episode_path.name}")
+        self.play_next.setText(f"Play next:\n{series.next_episode_path.name}")
 
 
 if __name__ == '__main__':
