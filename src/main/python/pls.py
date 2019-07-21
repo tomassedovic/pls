@@ -88,13 +88,14 @@ def next_file_to_play(config, series):
     try:
         current_index = all_files.index(current_filename)
     except ValueError:
-        sys.exit(
-            f"File {current_filename} not found in {current_directory}.\nAborting.")
+        print(f"File {current_filename} not found in {current_directory}.")
+        return ""
 
     try:
         next_filename = all_files[current_index + 1]
     except IndexError:
-        sys.exit("Reached the end of the directory.\nAborting.")
+        print("Reached the end of the directory.")
+        return ""
 
     return next_filename
 
@@ -108,12 +109,14 @@ def last_played_file(config, series):
     try:
         current_index = all_files.index(next_filename)
     except ValueError:
-        sys.exit(f"File {next_filename} not found in {current_directory}.\nAborting.")
+        print(f"File {next_filename} not found in {current_directory}.")
+        return ""
 
     try:
         last_played_filename = all_files[current_index - 1]
     except IndexError:
-        sys.exit("Reached the end of the directory.\nAborting.")
+        print("Reached the end of the directory.")
+        return ""
 
     return  Path(current_directory) / last_played_filename
 
@@ -235,18 +238,25 @@ class Pls():
 
     def replay_last_watched(self, config, series_name):
         path = self.series(config, series_name).last_watched_episode_path
-        play_file(path)
+        if path:
+            play_file(path)
+        else:
+            print("Can't play the last-watched file. No such file is on the record..")
 
     def play_next(self, config, series_name):
         path = self.series(config, series_name).next_episode_path
-        play_file(path)
+        if path:
+            play_file(path)
+        else:
+            print("Can't play next file. You've reached the end.")
 
     def set_next_and_save(self, config, series_name):
         next_filename = self.series(config, series_name).episode_after_the_current_one
-        print("Next file to play:", next_filename)
-        set_next(config, series_name, next_filename)
-        config_path = config_file_location()
-        save_config(config, config_path)
+        if next_filename:
+            print("Next file to play:", next_filename)
+            set_next(config, series_name, next_filename)
+            config_path = config_file_location()
+            save_config(config, config_path)
 
 
 class Series():
