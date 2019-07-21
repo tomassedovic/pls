@@ -39,16 +39,20 @@ class MainWindow(QWidget):
         self.setLayout(layout)
         self.refresh_labels()
 
-    def play_next_action(self):
-        self.pls.play_next('Bleach')
+    def play_last_action(self):
+        config = self.pls.config()
+        self.pls.replay_last_watched(config, 'Bleach')
         self.refresh_labels()
 
-    def play_last_action(self):
-        self.pls.replay_last_watched('Bleach')
+    def play_next_action(self):
+        config = self.pls.config()
+        self.pls.play_next(config, 'Bleach')
+        self.pls.set_next_and_save(config, 'Bleach')
         self.refresh_labels()
 
     def refresh_labels(self):
-        series = self.pls.series('Bleach')
+        config = self.pls.config()
+        series = self.pls.series(config, 'Bleach')
         self.text.setText(
             f"Series: {series.name}\nLocation: {series.location}")
         self.play_last.setText(

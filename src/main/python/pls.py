@@ -210,8 +210,7 @@ class Pls():
     def __init__(self):
         pass
 
-    def series(self, series_name):
-        series_id = series_name.lower()
+    def config(self):
         config_path = config_file_location()
         ensure_config_directory_exists(config_path)
         # TODO: create the config file as well, not just the dir
@@ -220,7 +219,10 @@ class Pls():
         assert config_path.parent.is_dir()
         config = load_config_file(config_path)
         print(repr(config.sections()))
+        return config
 
+    def series(self, config, series_name):
+        series_id = series_name.lower()
         series = Series()
         series.name = series_name
         series.id = series_id
@@ -228,20 +230,23 @@ class Pls():
         print(series.location)
         series.last_watched_episode_path = last_played_file(config, series_id)
         series.next_episode_path = file_to_play(config, series_id)
+        series.episode_after_the_current_one = next_file_to_play(config, series_id)
         return series
 
-    def replay_last_watched(self, series_name):
-        path = self.series(series_name).last_watched_episode_path
+    def replay_last_watched(self, config, series_name):
+        path = self.series(config, series_name).last_watched_episode_path
         play_file(path)
 
-    def play_next(self, series_name):
-        path = self.series(series_name).next_episode_path
+    def play_next(self, config, series_name):
+        path = self.series(config, series_name).next_episode_path
         play_file(path)
 
-    def set_next(self, series_name):
-        next_filename = next_file_to_play(config, series)
+    def set_next_and_save(self, config, series_name):
+        next_filename = self.series(config, series_name).episode_after_the_current_one
         print("Next file to play:", next_filename)
-        set_next(config, series, next_filename)
+        set_next(config, series_name, next_filename)
+        config_path = config_file_location()
+        save_config(config, config_path)
 
 
 class Series():
