@@ -203,8 +203,13 @@ class Pls():
         play_file(path)
 
     def play_next(self, series_name):
-        pass
+        path = self.series(series_name).next_episode_path
+        play_file(path)
 
+    def set_next(self, series_name):
+        next_filename = next_file_to_play(config, series)
+        print("Next file to play:", next_filename)
+        set_next(config, series, next_filename)
 
 class Series():
     pass

@@ -41,6 +41,7 @@ class MainWindow(QWidget):
         self.refresh_labels()
 
     def play_next_action(self):
+        self.pls.play_next('Bleach')
         self.refresh_labels()
 
     def play_last_action(self):
