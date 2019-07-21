@@ -110,10 +110,18 @@ def last_played_file(config, series):
 
 
 def play_file(file_path):
-    # NOTE: `xdg-open` returns immediately
-    result = subprocess.run(("xdg-open", file_path))
-    if result.returncode != 0:
-        print("Error playing video:\n", result)
+    system = platform.system()
+    if system == 'Linux':
+        # NOTE: `xdg-open` returns immediately
+        result = subprocess.run(("xdg-open", file_path))
+        if result.returncode != 0:
+            print("Error playing video:\n", result)
+    elif system == 'Windows':
+        os.startfile(file_path)
+    elif system == 'Darwin':
+        raise NotImplementedError("macOS systems are not supported yet")
+    else:
+        raise NotImplementedError("Unknown platform {}".format(system))
 
 
 def save_config(config, config_path):
