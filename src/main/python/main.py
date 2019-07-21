@@ -57,6 +57,7 @@ class MainWindow(QWidget):
 
 
 if __name__ == '__main__':
+    print(pls.config_file_location())
     if len(sys.argv) <= 1:
         context = ApplicationContext()       # 1. Instantiate ApplicationContext
         stylesheet = context.get_resource('styles.qss')
