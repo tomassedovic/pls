@@ -7,6 +7,7 @@ import re
 import subprocess
 import sys
 
+
 def natural_sort(l):
     convert = lambda text: int(text) if text.isdigit() else text.lower()
     alphanum_key = lambda key: [ convert(c) for c in re.split('([0-9]+)', key) ]
@@ -59,6 +60,7 @@ def set_next(config, series, filename):
     series = series.lower()
     config[series]['next'] = filename
 
+
 def series_directory(config, series):
     series = series.lower()
     hostname = platform.node().lower()
@@ -69,6 +71,7 @@ def series_directory(config, series):
     except KeyError:
         print(f"Not found. Falling back to 'directory'")
         return config[series]['directory']
+
 
 def file_to_play(config, series):
     series = series.lower()
@@ -239,6 +242,7 @@ class Pls():
         next_filename = next_file_to_play(config, series)
         print("Next file to play:", next_filename)
         set_next(config, series, next_filename)
+
 
 class Series():
     pass
