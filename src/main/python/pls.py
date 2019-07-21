@@ -61,7 +61,12 @@ def set_next(config, series, filename):
 
 def series_directory(config, series):
     series = series.lower()
-    return config[series]['directory']
+    hostname = platform.node().lower()
+    hostname_dir_key = 'directory_{}'.format(hostname)
+    try:
+        return config[series][hostname_dir_key]
+    except KeyError:
+        return config[series]['directory']
 
 def file_to_play(config, series):
     series = series.lower()
@@ -71,7 +76,7 @@ def file_to_play(config, series):
 
 def next_file_to_play(config, series):
     series = series.lower()
-    current_directory = config[series]['directory']
+    current_directory = series_directory(config, series)
     all_files = list_sorted_files(current_directory)
 
     current_filename = config[series]['next']
@@ -91,7 +96,7 @@ def next_file_to_play(config, series):
 
 def last_played_file(config, series):
     series = series.lower()
-    current_directory = config[series]['directory']
+    current_directory = series_directory(config, series)
     all_files = list_sorted_files(current_directory)
 
     next_filename = config[series]['next']
@@ -214,7 +219,8 @@ class Pls():
         series = Series()
         series.name = series_name
         series.id = series_id
-        series.location = config[series_id]['directory']
+        series.location = series_directory(config, series_id)
+        print(series.location)
         series.last_watched_episode_path = last_played_file(config, series_id)
         series.next_episode_path = file_to_play(config, series_id)
         return series
