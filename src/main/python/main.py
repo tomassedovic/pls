@@ -51,8 +51,9 @@ class MainWindow(QWidget):
         series = self.pls.series('Bleach')
         self.text.setText(
             "Series: {}\nLocation: {}".format(series.name, series.location))
-        self.play_last.setText("Replay last watched:\n{}".format(series.prev_path.name))
-        self.play_next.setText("Play next:\n{}".format(series.next_path.name))
+        self.play_last.setText(
+            "Replay last watched:\n{}".format(series.last_watched_episode_path.name))
+        self.play_next.setText("Play next:\n{}".format(series.next_episode_path.name))
 
 
 if __name__ == '__main__':

@@ -194,12 +194,12 @@ class Pls():
         series.name = series_name
         series.id = series_id
         series.location = config[series_id]['directory']
-        series.prev_path = last_played_file(config, series_id)
-        series.next_path = file_to_play(config, series_id)
+        series.last_watched_episode_path = last_played_file(config, series_id)
+        series.next_episode_path = file_to_play(config, series_id)
         return series
 
     def replay_last_watched(self, series_name):
-        path = self.series(series_name).prev_path
+        path = self.series(series_name).last_watched_episode_path
         play_file(path)
 
     def play_next(self, series_name):
