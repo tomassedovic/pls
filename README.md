@@ -8,15 +8,12 @@ https://build-system.fman.io/
 
 It's a GPL'd cross-platform GUI development kit using Python and Qt.
 
-### Creating a project
+### Running the project
 
-    $ mkdir pls
     $ cd pls
     $ python3 -m venv venv
     $ source venv/bin/activate
-    $ pip install fbs PyQt5==5.9.2
-    $ fbs startproject
-    $ vim src/main/python/main.py
+    $ pip install -r requirements.txt
     $ fbs run
 
 ### Building a tarball
@@ -35,10 +32,13 @@ It's a GPL'd cross-platform GUI development kit using Python and Qt.
 
 ### Building a Windows executable
 
-NOTE: `fbs freeze` should work here as well. It's only the installer that
-requires NSIS.
+#### Prerequisites:
+
+* Windows (64bit)
+* Install Python 64bit
+* Install Git for Windows
+* Visual C++ Redistributable for Visual Studio 2012 Update 4
+  https://www.microsoft.com/en-us/download/details.aspx?id=30679
+* Possibly add `C:\Windows\System32`, `C:\Windows\SysWOW64` to PATH
 
 https://build-system.fman.io/pyqt-exe-creation/
-
-Unfortunately, this does need a Windows system as well. Sigh. I should get a VM
-and try it out though. Shouldn't be terrible.
