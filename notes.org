@@ -8,6 +8,8 @@
 ** Or maybe just set the "previous" and "next" buttons to the same show?
 * Add license
 ** Needs to be GPL 3 because of FBS and Qt
+* Add a file extension whitelist
+** So we don't attempt to play e.g. subtitles, cover art etc.
 * Add keyboard accelerators
 * Edit config from the app
 ** Ideas:
