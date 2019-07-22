@@ -77,10 +77,8 @@ def series_directory(config, series):
         return config[series]['directory']
 
 
-def file_to_play(config, series):
-    series = series.lower()
-    directory = series_directory(config, series)
-    current_filename = config[series]['next']
+def file_to_play(config, series_id, directory):
+    current_filename = config[series_id]['next']
     to_play = Path(directory) / current_filename
     if to_play.exists():
         return to_play
@@ -88,16 +86,13 @@ def file_to_play(config, series):
         return Path(directory) / f"Error #1: File '{current_filename}' Not Found!"
 
 
-def next_file_to_play(config, series):
-    series = series.lower()
-    current_directory = series_directory(config, series)
-    all_files = list_sorted_files(current_directory)
-
-    current_filename = config[series]['next']
+def next_file_to_play(config, series_id, series_directory):
+    all_files = list_sorted_files(series_directory)
+    current_filename = config[series_id]['next']
     try:
         current_index = all_files.index(current_filename)
     except ValueError:
-        print(f"File {current_filename} not found in {current_directory}.")
+        print(f"File {current_filename} not found in {series_directory}.")
         return ""
 
     try:
@@ -109,25 +104,23 @@ def next_file_to_play(config, series):
     return next_filename
 
 
-def last_played_file(config, series):
-    series = series.lower()
-    current_directory = series_directory(config, series)
-    all_files = list_sorted_files(current_directory)
+def last_played_file(config, series_id, series_directory):
+    all_files = list_sorted_files(series_directory)
 
-    next_filename = config[series]['next']
+    next_filename = config[series_id]['next']
     try:
         current_index = all_files.index(next_filename)
     except ValueError:
-        print(f"File {next_filename} not found in {current_directory}.")
-        return Path(current_directory) / f"Error #2: File '{next_filename}' Not Found!"
+        print(f"File {next_filename} not found in {series_directory}.")
+        return Path(series_directory) / f"Error #2: File '{next_filename}' Not Found!"
 
     try:
         last_played_filename = all_files[current_index - 1]
     except IndexError:
         print("Reached the end of the directory.")
-        return Path(current_directory) / f"Error #3: No Previous File Exists!"
+        return Path(series_directory) / f"Error #3: No Previous File Exists!"
 
-    return Path(current_directory) / last_played_filename
+    return Path(series_directory) / last_played_filename
 
 
 def play_file(file_path):
@@ -245,17 +238,11 @@ class Pls():
             series.name = series_id
         series.id = series_id
         series.location = series_directory(config, series_id)
-        series.last_watched_episode_path = last_played_file(config, series_id)
-        series.next_episode_path = file_to_play(config, series_id)
-        series.episode_after_the_current_one = next_file_to_play(config, series_id)
+        series.last_watched_episode_path = last_played_file(config, series_id, series.location)
+        series.next_episode_path = file_to_play(config, series_id, series.location)
+        series.episode_after_the_current_one = next_file_to_play(config, series_id, series.location)
+        print("RETURNING SERIES", series)
         return series
-
-    def replay_last_watched(self, config, series_name):
-        path = self.series(config, series_name).last_watched_episode_path
-        if path:
-            play_file(path)
-        else:
-            print("Can't play the last-watched file. No such file is on the record..")
 
     def play_next(self, config, series_name):
         path = self.series(config, series_name).next_episode_path
@@ -274,4 +261,8 @@ class Pls():
 
 
 class Series():
-    pass
+    def replay_last_watched(self, config):
+        if self.last_watched_episode_path:
+            play_file(self.last_watched_episode_path)
+        else:
+            print("Can't play the last-watched file. No such file is on the record..")

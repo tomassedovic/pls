@@ -49,13 +49,17 @@ class MainWindow(QWidget):
     def play_last_action(self):
         config = self.pls.config()
         show_id = self.shows.currentData()
-        self.pls.replay_last_watched(config, show_id)
-        self.refresh_labels(config=config)
+        series = self.pls.series(config, show_id)
+        series.replay_last_watched(config)
+        # NOTE(shadower): we're not modifying the state in here, no need
+        # to refresh the UI. Leaving this commented out for now.
+        #self.refresh_labels(config=config, series=series)
 
     def play_next_action(self):
         config = self.pls.config()
         show_id = self.shows.currentData()
-        self.pls.play_next(config, show_id)
+        series = self.pls.series(config, show_id)
+        series.play_next()
         self.pls.set_next_and_save(config, show_id)
         self.refresh_labels(config=config)
 
