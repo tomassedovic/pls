@@ -1,4 +1,7 @@
 * Handle Config in `Pls.__init__`
+** CLOSING: we've reduced the amount of time it gets reloaded from disk
+*** and it is now only handled explicitly in main.py
+*** I prefer to have that explicit control there
 ** and only refresh as needed
 * Proper handling of beginning/end of the series
 ** Right now it seems like we just rotate sometimes
@@ -6,6 +9,8 @@
 ** If we're at the beginning, we should say "No previous show"
 ** IF we're at the end: "Reached the end"
 ** Or maybe just set the "previous" and "next" buttons to the same show?
+* Handle config changing from under us
+** When the config files can by synced, we should detect that before overwriting
 * Add license
 ** Needs to be GPL 3 because of FBS and Qt
 * Add a file extension whitelist
