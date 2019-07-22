@@ -1,8 +1,3 @@
-* Handle Config in `Pls.__init__`
-** CLOSING: we've reduced the amount of time it gets reloaded from disk
-*** and it is now only handled explicitly in main.py
-*** I prefer to have that explicit control there
-** and only refresh as needed
 * Proper handling of beginning/end of the series
 ** Right now it seems like we just rotate sometimes
 ** That's not really great
@@ -13,6 +8,12 @@
 ** When the config files can by synced, we should detect that before overwriting
 * Add license
 ** Needs to be GPL 3 because of FBS and Qt
+* Add an About dialog
+* Credit the icon we're using
+https://icons8.com/icon/46904/cute-color
+** It needs to be linked to from the About dialog
+** E.g.
+<a href="https://icons8.com/icon/46904/tv-show">TV Show icon by Icons8</a>
 * Add a file extension whitelist
 ** So we don't attempt to play e.g. subtitles, cover art etc.
 * Add keyboard accelerators
@@ -43,3 +44,12 @@ CLOSED: [2019-07-22 Mon 12:10]
 :END:
 *** When the same config is shared & synced across PCs not all shows are everywhere
 *** Display a warning saying (show not found on this machine) or something
+** DONE Handle Config in `Pls.__init__`
+CLOSED: [2019-07-22 Mon 17:07]
+:PROPERTIES:
+:ARCHIVE_TIME: 2019-07-22 Mon 17:07
+:END:
+*** CLOSING: we've reduced the amount of time it gets reloaded from disk
+**** and it is now only handled explicitly in main.py
+**** I prefer to have that explicit control there
+*** and only refresh as needed
