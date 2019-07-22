@@ -228,10 +228,12 @@ class Pls():
         for show_id in config.sections():
             yield self.series(config, show_id)
 
-    def series(self, config, series_name):
-        series_id = series_name.lower()
+    def series(self, config, series_id):
         series = Series()
-        series.name = series_name
+        try:
+            series.name = config[series_id]['name']
+        except KeyError:
+            series.name = series_id
         series.id = series_id
         series.location = series_directory(config, series_id)
         print(series.location)
