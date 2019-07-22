@@ -15,7 +15,11 @@ def natural_sort(l):
 
 
 def list_sorted_files(directory_path):
-    return natural_sort(os.listdir(directory_path))
+    try:
+        files = os.listdir(directory_path)
+    except FileNotFoundError:
+        files = []
+    return natural_sort(files)
 
 
 def config_file_location():
@@ -75,8 +79,13 @@ def series_directory(config, series):
 
 def file_to_play(config, series):
     series = series.lower()
+    directory = series_directory(config, series)
     current_filename = config[series]['next']
-    return Path(series_directory(config, series)) / current_filename
+    to_play = Path(directory) / current_filename
+    if to_play.exists():
+        return to_play
+    else:
+        return Path(directory) / f"Error #1: File '{current_filename}' Not Found!"
 
 
 def next_file_to_play(config, series):
@@ -110,15 +119,15 @@ def last_played_file(config, series):
         current_index = all_files.index(next_filename)
     except ValueError:
         print(f"File {next_filename} not found in {current_directory}.")
-        return ""
+        return Path(current_directory) / f"Error #2: File '{next_filename}' Not Found!"
 
     try:
         last_played_filename = all_files[current_index - 1]
     except IndexError:
         print("Reached the end of the directory.")
-        return ""
+        return Path(current_directory) / f"Error #3: No Previous File Exists!"
 
-    return  Path(current_directory) / last_played_filename
+    return Path(current_directory) / last_played_filename
 
 
 def play_file(file_path):
@@ -236,7 +245,6 @@ class Pls():
             series.name = series_id
         series.id = series_id
         series.location = series_directory(config, series_id)
-        print(series.location)
         series.last_watched_episode_path = last_played_file(config, series_id)
         series.next_episode_path = file_to_play(config, series_id)
         series.episode_after_the_current_one = next_file_to_play(config, series_id)

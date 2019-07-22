@@ -6,9 +6,6 @@
 ** If we're at the beginning, we should say "No previous show"
 ** IF we're at the end: "Reached the end"
 ** Or maybe just set the "previous" and "next" buttons to the same show?
-* Handle shows missing on this computer
-** When the same config is shared & synced across PCs not all shows are everywhere
-** Display a warning saying (show not found on this machine) or something
 * Add license
 ** Needs to be GPL 3 because of FBS and Qt
 * Add keyboard accelerators
@@ -32,3 +29,10 @@ CLOSED: [2019-07-22 Mon 11:43]
 :PROPERTIES:
 :ARCHIVE_TIME: 2019-07-22 Mon 11:43
 :END:
+** DONE Handle shows missing on this computer
+CLOSED: [2019-07-22 Mon 12:10]
+:PROPERTIES:
+:ARCHIVE_TIME: 2019-07-22 Mon 12:10
+:END:
+*** When the same config is shared & synced across PCs not all shows are everywhere
+*** Display a warning saying (show not found on this machine) or something
