@@ -1,6 +1,6 @@
 from fbs_runtime.application_context.PyQt5 import ApplicationContext
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QWidget, QLabel, QPushButton, QVBoxLayout
+from PyQt5.QtWidgets import QWidget, QLabel, QPushButton, QVBoxLayout, QComboBox
 
 import sys
 
@@ -11,6 +11,11 @@ class MainWindow(QWidget):
     def __init__(self):
         super().__init__()
         self.pls = pls.Pls()
+
+        self.shows = QComboBox()
+        for (index, show) in enumerate(self.pls.shows(self.pls.config())):
+            self.shows.insertItem(index, show.name, show.id)
+        self.shows.activated.connect(self.refresh_labels)
 
         self.text = QLabel()
         self.text.setWordWrap(True)
@@ -29,6 +34,7 @@ class MainWindow(QWidget):
         self.play_next.setObjectName("play_next")
 
         layout = QVBoxLayout()
+        layout.addWidget(self.shows)
         layout.addWidget(self.text)
         #layout.addWidget(self.previous_file_label)
         #layout.addWidget(self.next_file_label)
@@ -41,18 +47,21 @@ class MainWindow(QWidget):
 
     def play_last_action(self):
         config = self.pls.config()
-        self.pls.replay_last_watched(config, 'Bleach')
+        show_id = self.shows.currentData()
+        self.pls.replay_last_watched(config, show_id)
         self.refresh_labels()
 
     def play_next_action(self):
         config = self.pls.config()
-        self.pls.play_next(config, 'Bleach')
-        self.pls.set_next_and_save(config, 'Bleach')
+        show_id = self.shows.currentData()
+        self.pls.play_next(config, show_id)
+        self.pls.set_next_and_save(config, show_id)
         self.refresh_labels()
 
     def refresh_labels(self):
         config = self.pls.config()
-        series = self.pls.series(config, 'Bleach')
+        show_id = self.shows.currentData()
+        series = self.pls.series(config, show_id)
         self.text.setText(
             f"Series: {series.name}\nLocation: {series.location}")
         self.play_last.setText(

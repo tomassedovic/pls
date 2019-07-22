@@ -224,6 +224,10 @@ class Pls():
         print(repr(config.sections()))
         return config
 
+    def shows(self, config):
+        for show_id in config.sections():
+            yield self.series(config, show_id)
+
     def series(self, config, series_name):
         series_id = series_name.lower()
         series = Series()
