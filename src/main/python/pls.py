@@ -60,21 +60,14 @@ def add_series(config, series, directory):
     config[series]['next'] = 'Bleach - 18.mkv'
 
 
-def set_next(config, series, filename):
-    series = series.lower()
-    config[series]['next'] = filename
-
-
 def series_directory(config, series):
     series = series.lower()
     hostname = platform.node().lower()
     hostname_dir_key = f'directory_{hostname}'
     try:
-        print(f"Looking for directory under '{hostname_dir_key}'")
-        return config[series][hostname_dir_key]
+        return Path(config[series][hostname_dir_key])
     except KeyError:
-        print(f"Not found. Falling back to 'directory'")
-        return config[series]['directory']
+        return Path(config[series]['directory'])
 
 
 def file_to_play(config, series_id, directory):
@@ -86,9 +79,8 @@ def file_to_play(config, series_id, directory):
         return Path(directory) / f"Error #1: File '{current_filename}' Not Found!"
 
 
-def next_file_to_play(config, series_id, series_directory):
+def next_file_to_play(series_directory, current_filename):
     all_files = list_sorted_files(series_directory)
-    current_filename = config[series_id]['next']
     try:
         current_index = all_files.index(current_filename)
     except ValueError:
@@ -216,7 +208,6 @@ class Pls():
         pass
 
     def config(self):
-        print("READING CONFIG")
         config_path = config_file_location()
         ensure_config_directory_exists(config_path)
         # TODO: create the config file as well, not just the dir
@@ -230,7 +221,6 @@ class Pls():
             yield self.series(config, show_id)
 
     def series(self, config, series_id):
-        print("GETTING SERIES", repr(config), repr(series_id))
         series = Series()
         try:
             series.name = config[series_id]['name']
@@ -240,29 +230,32 @@ class Pls():
         series.location = series_directory(config, series_id)
         series.last_watched_episode_path = last_played_file(config, series_id, series.location)
         series.next_episode_path = file_to_play(config, series_id, series.location)
-        series.episode_after_the_current_one = next_file_to_play(config, series_id, series.location)
-        print("RETURNING SERIES", series)
+        series.episode_after_the_current_one = next_file_to_play(series.location, series.next_episode_path.name)
         return series
 
-    def play_next(self, config, series_name):
-        path = self.series(config, series_name).next_episode_path
-        if path:
-            play_file(path)
-        else:
-            print("Can't play next file. You've reached the end.")
-
-    def set_next_and_save(self, config, series_name):
-        next_filename = self.series(config, series_name).episode_after_the_current_one
+    def set_next_and_save(self, config, series):
+        next_filename = series.episode_after_the_current_one
         if next_filename:
-            print("Next file to play:", next_filename)
-            set_next(config, series_name, next_filename)
+            config[series.id]['next'] = next_filename
+            series.next()
             config_path = config_file_location()
             save_config(config, config_path)
 
 
 class Series():
-    def replay_last_watched(self, config):
+    def replay_last_watched(self):
         if self.last_watched_episode_path:
             play_file(self.last_watched_episode_path)
         else:
             print("Can't play the last-watched file. No such file is on the record..")
+
+    def play_next(self):
+        if self.next_episode_path:
+            play_file(self.next_episode_path)
+        else:
+            print("Can't play next file. You've reached the end.")
+
+    def next(self):
+        self.last_watched_episode_path = self.next_episode_path
+        self.next_episode_path = self.location / self.episode_after_the_current_one
+        self.episode_after_the_current_one = next_file_to_play(self.location, self.next_episode_path.name)

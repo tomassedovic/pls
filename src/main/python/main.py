@@ -14,7 +14,6 @@ class MainWindow(QWidget):
 
         self.shows = QComboBox()
         for (index, show) in enumerate(self.pls.shows(self.pls.config())):
-            print(index, show.name, show.id)
             self.shows.insertItem(index, show.name, show.id)
         self.shows.activated.connect(lambda: self.refresh_labels())
 
@@ -50,7 +49,7 @@ class MainWindow(QWidget):
         config = self.pls.config()
         show_id = self.shows.currentData()
         series = self.pls.series(config, show_id)
-        series.replay_last_watched(config)
+        series.replay_last_watched()
         # NOTE(shadower): we're not modifying the state in here, no need
         # to refresh the UI. Leaving this commented out for now.
         #self.refresh_labels(config=config, series=series)
@@ -60,15 +59,14 @@ class MainWindow(QWidget):
         show_id = self.shows.currentData()
         series = self.pls.series(config, show_id)
         series.play_next()
-        self.pls.set_next_and_save(config, show_id)
-        self.refresh_labels(config=config)
+        self.pls.set_next_and_save(config, series)
+        self.refresh_labels(config=config, series=series)
 
     def refresh_labels(self, config=None, series=None):
-        print("REFRESH LABELS", repr(config), repr(series))
         if config is None:
             config = self.pls.config()
         show_id = self.shows.currentData()
-        if series is None:
+        if series is None or show_id != series.id:
             series = self.pls.series(config, show_id)
         self.text.setText(
             f"Series: {series.name}\nLocation: {series.location}")
@@ -78,7 +76,6 @@ class MainWindow(QWidget):
 
 
 if __name__ == '__main__':
-    print(pls.config_file_location())
     if len(sys.argv) <= 1:
         context = ApplicationContext()       # 1. Instantiate ApplicationContext
         stylesheet = context.get_resource('styles.qss')
