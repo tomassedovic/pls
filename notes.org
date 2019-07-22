@@ -1,0 +1,20 @@
+* Add support for series Name in the config
+** The name would be displayable
+** ID is for internal stuff
+* Multiple series selection
+* Proper handling of beginning/end of the series
+** Right now it seems like we just rotate sometimes
+** That's not really great
+** If we're at the beginning, we should say "No previous show"
+** IF we're at the end: "Reached the end"
+** Or maybe just set the "previous" and "next" buttons to the same show?
+* Add license
+** Needs to be GPL 3 because of FBS and Qt
+* Add keyboard accelerators
+* Edit config from the app
+** Ideas:
+*** Adding a new series
+*** Removing a series
+*** Setting the currently-played episode
+*** Changing the directory for a series
+*** Adding a local directory for a series
