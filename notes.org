@@ -1,13 +1,14 @@
-* Add support for series Name in the config
-** The name would be displayable
-** ID is for internal stuff
-* Multiple series selection
+* Handle Config in `Pls.__init__`
+** and only refresh as needed
 * Proper handling of beginning/end of the series
 ** Right now it seems like we just rotate sometimes
 ** That's not really great
 ** If we're at the beginning, we should say "No previous show"
 ** IF we're at the end: "Reached the end"
 ** Or maybe just set the "previous" and "next" buttons to the same show?
+* Handle shows missing on this computer
+** When the same config is shared & synced across PCs not all shows are everywhere
+** Display a warning saying (show not found on this machine) or something
 * Add license
 ** Needs to be GPL 3 because of FBS and Qt
 * Add keyboard accelerators
@@ -18,3 +19,16 @@
 *** Setting the currently-played episode
 *** Changing the directory for a series
 *** Adding a local directory for a series
+* Archive :ARCHIVE:
+** DONE Add support for series Name in the config
+CLOSED: [2019-07-22 Mon 11:43]
+:PROPERTIES:
+:ARCHIVE_TIME: 2019-07-22 Mon 11:43
+:END:
+*** The name would be displayable
+*** ID is for internal stuff
+** DONE Multiple series selection
+CLOSED: [2019-07-22 Mon 11:43]
+:PROPERTIES:
+:ARCHIVE_TIME: 2019-07-22 Mon 11:43
+:END:
