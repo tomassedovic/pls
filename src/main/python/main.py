@@ -14,8 +14,9 @@ class MainWindow(QWidget):
 
         self.shows = QComboBox()
         for (index, show) in enumerate(self.pls.shows(self.pls.config())):
+            print(index, show.name, show.id)
             self.shows.insertItem(index, show.name, show.id)
-        self.shows.activated.connect(self.refresh_labels)
+        self.shows.activated.connect(lambda: self.refresh_labels())
 
         self.text = QLabel()
         self.text.setWordWrap(True)
@@ -49,19 +50,22 @@ class MainWindow(QWidget):
         config = self.pls.config()
         show_id = self.shows.currentData()
         self.pls.replay_last_watched(config, show_id)
-        self.refresh_labels()
+        self.refresh_labels(config=config)
 
     def play_next_action(self):
         config = self.pls.config()
         show_id = self.shows.currentData()
         self.pls.play_next(config, show_id)
         self.pls.set_next_and_save(config, show_id)
-        self.refresh_labels()
+        self.refresh_labels(config=config)
 
-    def refresh_labels(self):
-        config = self.pls.config()
+    def refresh_labels(self, config=None, series=None):
+        print("REFRESH LABELS", repr(config), repr(series))
+        if config is None:
+            config = self.pls.config()
         show_id = self.shows.currentData()
-        series = self.pls.series(config, show_id)
+        if series is None:
+            series = self.pls.series(config, show_id)
         self.text.setText(
             f"Series: {series.name}\nLocation: {series.location}")
         self.play_last.setText(

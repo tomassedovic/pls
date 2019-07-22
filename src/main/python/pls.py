@@ -223,14 +223,13 @@ class Pls():
         pass
 
     def config(self):
+        print("READING CONFIG")
         config_path = config_file_location()
         ensure_config_directory_exists(config_path)
         # TODO: create the config file as well, not just the dir
-
         assert config_path.parent.exists()
         assert config_path.parent.is_dir()
         config = load_config_file(config_path)
-        print(repr(config.sections()))
         return config
 
     def shows(self, config):
@@ -238,6 +237,7 @@ class Pls():
             yield self.series(config, show_id)
 
     def series(self, config, series_id):
+        print("GETTING SERIES", repr(config), repr(series_id))
         series = Series()
         try:
             series.name = config[series_id]['name']
