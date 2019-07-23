@@ -84,13 +84,13 @@ def next_file_to_play(series_directory, current_filename):
     try:
         current_index = all_files.index(current_filename)
     except ValueError:
-        print(f"File {current_filename} not found in {series_directory}.")
+        # TODO(shadower): handle this properly. File not found?
         return ""
 
     try:
         next_filename = all_files[current_index + 1]
     except IndexError:
-        print("Reached the end of the directory.")
+        # TODO(shadower): handle this properly. Reached the end?
         return ""
 
     return next_filename
@@ -103,13 +103,11 @@ def last_played_file(config, series_id, series_directory):
     try:
         current_index = all_files.index(next_filename)
     except ValueError:
-        print(f"File {next_filename} not found in {series_directory}.")
         return Path(series_directory) / f"Error #2: File '{next_filename}' Not Found!"
 
     try:
         last_played_filename = all_files[current_index - 1]
     except IndexError:
-        print("Reached the end of the directory.")
         return Path(series_directory) / f"Error #3: No Previous File Exists!"
 
     return Path(series_directory) / last_played_filename
