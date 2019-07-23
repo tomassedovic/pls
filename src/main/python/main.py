@@ -1,5 +1,5 @@
 from fbs_runtime.application_context.PyQt5 import ApplicationContext
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QTimer
 from PyQt5.QtWidgets import QWidget, QLabel, QPushButton, QComboBox
 from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QGroupBox
 
@@ -22,11 +22,11 @@ class MainWindow(QWidget):
         self.text.setWordWrap(True)
 
         self.play_last = QPushButton("Play Last")
-        self.play_last.clicked.connect(self.play_last_action)
+        self.play_last.clicked.connect(lambda: self.play_last_action())
         self.play_last.setObjectName("play_last")
 
         self.play_next = QPushButton("Play Next")
-        self.play_next.clicked.connect(self.play_next_action)
+        self.play_next.clicked.connect(lambda: self.play_next_action())
         self.play_next.setObjectName("play_next")
 
         self.settings = QPushButton("Settings");
@@ -53,6 +53,12 @@ class MainWindow(QWidget):
         self.refresh_labels()
 
     def play_last_action(self):
+        # NOTE(shadower): Briefly disable the button. This is to prevent
+        # accidental double clicking.
+        self.play_last.setEnabled(False)
+        timer = QTimer()
+        timer.singleShot(3000, lambda: self.play_last.setEnabled(True))
+
         config = self.pls.config()
         show_id = self.shows.currentData()
         series = self.pls.series(config, show_id)
@@ -62,6 +68,12 @@ class MainWindow(QWidget):
         #self.refresh_labels(config=config, series=series)
 
     def play_next_action(self):
+        # NOTE(shadower): Briefly disable the button. This is to prevent
+        # accidental double clicking.
+        self.play_next.setEnabled(False)
+        timer = QTimer()
+        timer.singleShot(3000, lambda: self.play_next.setEnabled(True))
+
         config = self.pls.config()
         show_id = self.shows.currentData()
         series = self.pls.series(config, show_id)
