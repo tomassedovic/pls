@@ -25,6 +25,7 @@ https://icons8.com/icon/46904/cute-color
 ** It needs to be linked to from the About dialog
 ** E.g.
 <a href="https://icons8.com/icon/46904/tv-show">TV Show icon by Icons8</a>
+* Make the "File Not Found" button text red
 * Proper handling of beginning/end of the series
 ** Right now it seems like we just rotate sometimes
 ** That's not really great
