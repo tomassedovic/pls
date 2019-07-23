@@ -3,14 +3,6 @@
 ** Anyway, after clicking, the button should be disabled for a bit
 *** say 3 seconds?
 *** To prevent the video taking a sec or two to start?
-* Proper handling of beginning/end of the series
-** Right now it seems like we just rotate sometimes
-** That's not really great
-** If we're at the beginning, we should say "No previous show"
-** IF we're at the end: "Reached the end"
-** Or maybe just set the "previous" and "next" buttons to the same show?
-* Handle config changing from under us
-** When the config files can by synced, we should detect that before overwriting
 * Set up Windows CI
 ** So we get automatic builds
 ** AppVeyor
@@ -33,9 +25,22 @@ https://icons8.com/icon/46904/cute-color
 ** It needs to be linked to from the About dialog
 ** E.g.
 <a href="https://icons8.com/icon/46904/tv-show">TV Show icon by Icons8</a>
+* Proper handling of beginning/end of the series
+** Right now it seems like we just rotate sometimes
+** That's not really great
+** If we're at the beginning, we should say "No previous show"
+** IF we're at the end: "Reached the end"
+** Or maybe just set the "previous" and "next" buttons to the same show?
+* Handle config changing from under us
+** When the config files can by synced, we should detect that before overwriting
 * Add a file extension whitelist
 ** So we don't attempt to play e.g. subtitles, cover art etc.
 * Add keyboard accelerators
+* Use proper toml parser
+** We say the file is toml but we parse it as ini
+** I'm pretty sure it's not actually valid toml (it's missing quotes for the strings)
+** Here's a Python toml library
+https://pypi.org/project/toml/
 * Edit config from the app
 ** Ideas:
 *** Adding a new series
