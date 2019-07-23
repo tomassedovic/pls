@@ -6,8 +6,22 @@
 ** Or maybe just set the "previous" and "next" buttons to the same show?
 * Handle config changing from under us
 ** When the config files can by synced, we should detect that before overwriting
-* Add license
-** Needs to be GPL 3 because of FBS and Qt
+* Set up Windows CI
+** So we get automatic builds
+** AppVeyor
+*** Windows and Linux (no macOS)
+https://www.appveyor.com/docs/build-environment/
+*** Supports gitlab:
+https://www.appveyor.com/blog/2018/11/06/gitlab-bitbucket-merge-pull-requests/
+*** Should be fine for this
+** Travis CI
+*** Windows, Linux & macOS
+*** Does not (AFAICT) supprot gitlab
+** Azure pipelines
+*** Windows, Linux, macOS
+https://azure.microsoft.com/ru-ru/blog/announcing-azure-pipelines-with-unlimited-ci-cd-minutes-for-open-source/
+*** Supports gitlab
+https://docs.microsoft.com/en-us/azure/devops/pipelines/get-started/?view=azure-devops
 * Add an About dialog
 * Credit the icon we're using
 https://icons8.com/icon/46904/cute-color
@@ -53,3 +67,9 @@ CLOSED: [2019-07-22 Mon 17:07]
 **** and it is now only handled explicitly in main.py
 **** I prefer to have that explicit control there
 *** and only refresh as needed
+** DONE Add license
+CLOSED: [2019-07-23 Tue 13:16]
+:PROPERTIES:
+:ARCHIVE_TIME: 2019-07-23 Tue 13:16
+:END:
+*** Needs to be GPL 3 because of FBS and Qt
