@@ -1,6 +1,7 @@
 from fbs_runtime.application_context.PyQt5 import ApplicationContext
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QWidget, QLabel, QPushButton, QVBoxLayout, QComboBox
+from PyQt5.QtWidgets import QWidget, QLabel, QPushButton, QComboBox
+from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QGroupBox
 
 import sys
 
@@ -20,11 +21,6 @@ class MainWindow(QWidget):
         self.text = QLabel()
         self.text.setWordWrap(True)
 
-        self.previous_file_label = QLabel()
-        self.previous_file_label.setText("Last played:")
-        self.next_file_label = QLabel()
-        self.next_file_label.setText("Next:")
-
         self.play_last = QPushButton("Play Last")
         self.play_last.clicked.connect(self.play_last_action)
         self.play_last.setObjectName("play_last")
@@ -33,15 +29,21 @@ class MainWindow(QWidget):
         self.play_next.clicked.connect(self.play_next_action)
         self.play_next.setObjectName("play_next")
 
+        self.settings = QPushButton("Settings");
+        self.about = QPushButton("About");
+
+        meta_buttons = QGroupBox()
+        meta_buttons_layout = QHBoxLayout()
+        meta_buttons_layout.addWidget(self.settings)
+        meta_buttons_layout.addWidget(self.about)
+        meta_buttons.setLayout(meta_buttons_layout)
+
         layout = QVBoxLayout()
         layout.addWidget(self.shows)
         layout.addWidget(self.text)
-        #layout.addWidget(self.previous_file_label)
-        #layout.addWidget(self.next_file_label)
         layout.addWidget(self.play_last)
         layout.addWidget(self.play_next)
-        #layout.setAlignment(self.play_last, Qt.AlignHCenter)
-        #layout.setAlignment(self.play_next, Qt.AlignHCenter)
+        layout.addWidget(meta_buttons)
         self.setLayout(layout)
         self.refresh_labels()
 
