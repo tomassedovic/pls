@@ -48,7 +48,7 @@ https://build-system.fman.io/pyqt-exe-creation/
 
 ## License
 
-### Code (GPLv3)
+### Code (GPLv3 or later)
 
 Copyright (C) 2019  Tomas Sedovic
 

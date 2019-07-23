@@ -1,9 +1,3 @@
-* Add an About dialog
-* Credit the icon we're using
-https://icons8.com/icon/46904/cute-color
-** It needs to be linked to from the About dialog
-** E.g.
-<a href="https://icons8.com/icon/46904/tv-show">TV Show icon by Icons8</a>
 * Make the "File Not Found" button text red
 * Proper handling of beginning/end of the series
 ** Right now it seems like we just rotate sometimes
@@ -95,3 +89,17 @@ CLOSED: [2019-07-24 Wed 01:11]
 *** Anyway, after clicking, the button should be disabled for a bit
 **** say 3 seconds?
 **** To prevent the video taking a sec or two to start?
+** DONE Credit the icon we're using
+CLOSED: [2019-07-24 Wed 01:33]
+:PROPERTIES:
+:ARCHIVE_TIME: 2019-07-24 Wed 01:33
+:END:
+https://icons8.com/icon/46904/cute-color
+*** It needs to be linked to from the About dialog
+*** E.g.
+<a href="https://icons8.com/icon/46904/tv-show">TV Show icon by Icons8</a>
+** DONE Add an About dialog
+CLOSED: [2019-07-24 Wed 01:33]
+:PROPERTIES:
+:ARCHIVE_TIME: 2019-07-24 Wed 01:33
+:END:

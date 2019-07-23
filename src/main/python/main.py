@@ -1,11 +1,52 @@
 from fbs_runtime.application_context.PyQt5 import ApplicationContext
 from PyQt5.QtCore import Qt, QTimer
 from PyQt5.QtWidgets import QWidget, QLabel, QPushButton, QComboBox
-from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QGroupBox
+from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QGroupBox, QMessageBox
 
 import sys
 
 import pls
+
+
+ABOUT_TEXT = """\
+<p>
+You can find the source code at this location:<br />
+<a href="https://gitlab.com/Sedovic/pls">https://gitlab.com/Sedovic/pls</a>
+</p>
+<p>
+Copyright (C) 2019 Tomas Sedovic <tomas@sedovic.cz>
+</p>
+<p>
+<b>Program license:</b>
+</p>
+<p>
+This program is free software: you can redistribute it and/or modify it under
+the terms of the GNU General Public License as published by the Free Software
+Foundation, either version 3 of the License, or (at your option) any later
+version.
+</p>
+<p>
+This program is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+PARTICULAR PURPOSE. See the GNU General Public License for more details.
+</p>
+<p>
+You should have received a copy of the GNU General Public License
+along with this program. If not, see<br />
+<a href="https://www.gnu.org/licenses/">https://www.gnu.org/licenses/</a>.
+</p>
+<p>
+<b>Icons:</b><br />
+The "TV Show" application icon comes from Icons8:
+</p>
+<p>
+<a href="https://icons8.com/icon/46904/cute-color">https://icons8.com/icon/46904/cute-color</a>
+</p>
+<p>
+It is provided free of charge under the condition of showing the link above in
+the About dialog of the app that uses it.
+</p>
+"""
 
 
 class MainWindow(QWidget):
@@ -30,7 +71,11 @@ class MainWindow(QWidget):
         self.play_next.setObjectName("play_next")
 
         self.settings = QPushButton("Settings");
+        about = QMessageBox(QMessageBox.NoIcon, "About pls", "<b>About pls</b>")
+        about.setInformativeText(ABOUT_TEXT)
+
         self.about = QPushButton("About");
+        self.about.clicked.connect(lambda: about.exec())
 
         play_buttons = QGroupBox()
         layout = QVBoxLayout()
