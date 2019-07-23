@@ -1,3 +1,8 @@
+* Prevent double-clicking on the "Play next episode" button
+** Fucking Windows teaching people to double-click
+** Anyway, after clicking, the button should be disabled for a bit
+*** say 3 seconds?
+*** To prevent the video taking a sec or two to start?
 * Proper handling of beginning/end of the series
 ** Right now it seems like we just rotate sometimes
 ** That's not really great
