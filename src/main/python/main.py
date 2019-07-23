@@ -25,7 +25,7 @@ class MainWindow(QWidget):
         self.play_last.clicked.connect(self.play_last_action)
         self.play_last.setObjectName("play_last")
 
-        self.play_next = QPushButton("Play Next\nLOL")
+        self.play_next = QPushButton("Play Next")
         self.play_next.clicked.connect(self.play_next_action)
         self.play_next.setObjectName("play_next")
 
@@ -75,8 +75,7 @@ class MainWindow(QWidget):
         show_id = self.shows.currentData()
         if series is None or show_id != series.id:
             series = self.pls.series(config, show_id)
-        self.text.setText(
-            f"Series: {series.name}\nLocation: {series.location}")
+        self.text.setText(f"Location: {series.location}")
         self.play_last.setText(
             f"Replay last watched:\n{series.last_watched_episode_path.name}")
         self.play_next.setText(f"Play next:\n{series.next_episode_path.name}")
