@@ -32,6 +32,12 @@ class MainWindow(QWidget):
         self.settings = QPushButton("Settings");
         self.about = QPushButton("About");
 
+        play_buttons = QGroupBox()
+        play_buttons_layout = QVBoxLayout()
+        play_buttons_layout.addWidget(self.play_last)
+        play_buttons_layout.addWidget(self.play_next)
+        play_buttons.setLayout(play_buttons_layout)
+
         meta_buttons = QGroupBox()
         meta_buttons_layout = QHBoxLayout()
         meta_buttons_layout.addWidget(self.settings)
@@ -41,8 +47,7 @@ class MainWindow(QWidget):
         layout = QVBoxLayout()
         layout.addWidget(self.shows)
         layout.addWidget(self.text)
-        layout.addWidget(self.play_last)
-        layout.addWidget(self.play_next)
+        layout.addWidget(play_buttons)
         layout.addWidget(meta_buttons)
         self.setLayout(layout)
         self.refresh_labels()
