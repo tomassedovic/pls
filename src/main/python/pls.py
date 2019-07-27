@@ -8,6 +8,15 @@ import subprocess
 import sys
 
 
+class Error():
+    def __init__(self, code, message):
+        self.code = code
+        self.message = message
+
+    def __str__(self):
+        return f"Error #{self.code}: {self.message}"
+
+
 def natural_sort(l):
     convert = lambda text: int(text) if text.isdigit() else text.lower()
     alphanum_key = lambda key: [ convert(c) for c in re.split('([0-9]+)', key) ]
@@ -69,7 +78,7 @@ def file_to_play(config, series_id, directory):
     if to_play.exists():
         return to_play
     else:
-        return Path(directory) / f"Error #1: File '{current_filename}' Not Found!"
+        return Error(1, f"File '{current_filename}' Not Found!")
 
 
 def next_file_to_play(series_directory, current_filename):
@@ -96,16 +105,17 @@ def last_played_file(config, series_id, series_directory):
     try:
         current_index = all_files.index(next_filename)
     except ValueError:
-        return Path(series_directory) / f"Error #2: File '{next_filename}' Not Found!"
+        return Error(2, f"File '{next_filename}' Not Found!")
 
     if current_index == 0:
         # We're at the beginning
+        # TODO: handle this differently? Show a message instead?
         return Path(series_directory) / next_filename
 
     try:
         last_played_filename = all_files[current_index - 1]
     except IndexError:
-        return Path(series_directory) / f"Error #3: No Previous File Exists!"
+        return Error(3, "No Previous File Exists!")
 
     return Path(series_directory) / last_played_filename
 
@@ -128,7 +138,6 @@ def play_file(file_path):
 def save_config(config, config_path):
     with open(config_path, 'w') as config_file:
         config.write(config_file)
-
 
 
 class Pls():

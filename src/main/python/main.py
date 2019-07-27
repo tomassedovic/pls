@@ -133,9 +133,20 @@ class MainWindow(QWidget):
         if series is None or show_id != series.id:
             series = self.pls.series(config, show_id)
         self.text.setText(f"Location: {series.location}")
-        self.play_last.setText(
-            f"Replay last watched:\n{series.last_watched_episode_path.name}")
-        self.play_next.setText(f"Play next:\n{series.next_episode_path.name}")
+
+        last_path = series.last_watched_episode_path
+        if isinstance(last_path, pls.Error):
+            # TODO: make the text red
+            self.play_last.setText(str(last_path))
+        else:
+            self.play_last.setText(f"Replay last watched:\n{last_path.name}")
+
+        next_path = series.next_episode_path
+        if isinstance(next_path, pls.Error):
+            # TODO: make the text red
+            self.play_next.setText(str(next_path))
+        else:
+            self.play_next.setText(f"Play next:\n{next_path.name}")
 
 
 if __name__ == '__main__':
