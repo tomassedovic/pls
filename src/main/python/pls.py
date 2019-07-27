@@ -130,6 +130,65 @@ def save_config(config, config_path):
         config.write(config_file)
 
 
+
+class Pls():
+    def __init__(self):
+        pass
+
+    def config(self):
+        config_path = config_file_location()
+        ensure_config_directory_exists(config_path)
+        # TODO: create the config file as well, not just the dir
+        assert config_path.parent.exists()
+        assert config_path.parent.is_dir()
+        config = load_config_file(config_path)
+        return config
+
+    def shows(self, config):
+        for show_id in config.sections():
+            yield self.series(config, show_id)
+
+    def series(self, config, series_id):
+        series = Series()
+        try:
+            series.name = config[series_id]['name']
+        except KeyError:
+            series.name = series_id
+        series.id = series_id
+        series.location = series_directory(config, series_id)
+        series.last_watched_episode_path = last_played_file(config, series_id, series.location)
+        series.next_episode_path = file_to_play(config, series_id, series.location)
+        series.episode_after_the_current_one = next_file_to_play(series.location, series.next_episode_path.name)
+        return series
+
+    def set_next_and_save(self, config, series):
+        next_filename = series.episode_after_the_current_one
+        if next_filename:
+            config[series.id]['next'] = next_filename
+            series.next()
+            config_path = config_file_location()
+            save_config(config, config_path)
+
+
+class Series():
+    def replay_last_watched(self):
+        if self.last_watched_episode_path:
+            play_file(self.last_watched_episode_path)
+        else:
+            print("Can't play the last-watched file. No such file is on the record..")
+
+    def play_next(self):
+        if self.next_episode_path:
+            play_file(self.next_episode_path)
+        else:
+            print("Can't play next file. You've reached the end.")
+
+    def next(self):
+        self.last_watched_episode_path = self.next_episode_path
+        self.next_episode_path = self.location / self.episode_after_the_current_one
+        self.episode_after_the_current_one = next_file_to_play(self.location, self.next_episode_path.name)
+
+
 class Action(Enum):
     PLAY_NEXT = auto()
     SHOW_LAST = auto()
@@ -196,61 +255,3 @@ def run():
     elif action == Action.SHOW_LAST:
         path = last_played_file(config, series)
         print(path)
-
-
-class Pls():
-    def __init__(self):
-        pass
-
-    def config(self):
-        config_path = config_file_location()
-        ensure_config_directory_exists(config_path)
-        # TODO: create the config file as well, not just the dir
-        assert config_path.parent.exists()
-        assert config_path.parent.is_dir()
-        config = load_config_file(config_path)
-        return config
-
-    def shows(self, config):
-        for show_id in config.sections():
-            yield self.series(config, show_id)
-
-    def series(self, config, series_id):
-        series = Series()
-        try:
-            series.name = config[series_id]['name']
-        except KeyError:
-            series.name = series_id
-        series.id = series_id
-        series.location = series_directory(config, series_id)
-        series.last_watched_episode_path = last_played_file(config, series_id, series.location)
-        series.next_episode_path = file_to_play(config, series_id, series.location)
-        series.episode_after_the_current_one = next_file_to_play(series.location, series.next_episode_path.name)
-        return series
-
-    def set_next_and_save(self, config, series):
-        next_filename = series.episode_after_the_current_one
-        if next_filename:
-            config[series.id]['next'] = next_filename
-            series.next()
-            config_path = config_file_location()
-            save_config(config, config_path)
-
-
-class Series():
-    def replay_last_watched(self):
-        if self.last_watched_episode_path:
-            play_file(self.last_watched_episode_path)
-        else:
-            print("Can't play the last-watched file. No such file is on the record..")
-
-    def play_next(self):
-        if self.next_episode_path:
-            play_file(self.next_episode_path)
-        else:
-            print("Can't play next file. You've reached the end.")
-
-    def next(self):
-        self.last_watched_episode_path = self.next_episode_path
-        self.next_episode_path = self.location / self.episode_after_the_current_one
-        self.episode_after_the_current_one = next_file_to_play(self.location, self.next_episode_path.name)
