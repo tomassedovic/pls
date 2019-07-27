@@ -98,6 +98,10 @@ def last_played_file(config, series_id, series_directory):
     except ValueError:
         return Path(series_directory) / f"Error #2: File '{next_filename}' Not Found!"
 
+    if current_index == 0:
+        # We're at the beginning
+        return Path(series_directory) / next_filename
+
     try:
         last_played_filename = all_files[current_index - 1]
     except IndexError:
