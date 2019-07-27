@@ -53,13 +53,6 @@ def ensure_config_directory_exists(config_path):
     os.makedirs(config_path.parent, exist_ok=True)
 
 
-def add_series(config, series, directory):
-    series = series.lower()
-    config[series] = {}
-    config[series]['directory'] = '/home/thomas/Videos/Bleach/'
-    config[series]['next'] = 'Bleach - 18.mkv'
-
-
 def series_directory(config, series):
     series = series.lower()
     hostname = platform.node().lower()
