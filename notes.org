@@ -1,10 +1,32 @@
-* Make the "File Not Found" button text red
 * Proper handling of beginning/end of the series
 ** Right now it seems like we just rotate sometimes
 ** That's not really great
 ** If we're at the beginning, we should say "No previous show"
 ** IF we're at the end: "Reached the end"
 ** Or maybe just set the "previous" and "next" buttons to the same show?
+* Mandle multi-directory series
+** E.g. files with the following structure:
+Show/
+- S01/
+  - e01.avi
+  - e02.avi
+- S02/
+  - e01.avi
+  - e02.avi
+* Make the "watch the last show" functionality less prominent?
+** Right now, the obvious "Play Next" button is only slightly bigger
+** But that's the entire raison d'etre of this app
+** And I've seen users mistakenly clicking the "prev show" button instead
+** We could replace the "prev show" button
+*** maybe with a link?
+*** or a dropdown?
+** Move the "Play next" button up
+*** make it bigger
+*** make the font bigger
+* Make the "File Not Found" button text red and disabled
+* Show error msgbox on missing config
+** Or create an empty one
+* Add some test config and test data
 * Handle config changing from under us
 ** When the config files can by synced, we should detect that before overwriting
 * Add a file extension whitelist
@@ -103,3 +125,9 @@ CLOSED: [2019-07-24 Wed 01:33]
 :PROPERTIES:
 :ARCHIVE_TIME: 2019-07-24 Wed 01:33
 :END:
+** DONE Allow overriding the config file
+CLOSED: [2019-07-27 Sat 19:10]
+:PROPERTIES:
+:ARCHIVE_TIME: 2019-07-27 Sat 19:10
+:END:
+*** for testing
