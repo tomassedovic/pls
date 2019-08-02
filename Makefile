@@ -5,3 +5,7 @@ test:
 run:
 	venv/bin/fbs run
 .PHONY: run
+
+build:
+	scripts/build.sh
+.PHONY: build
