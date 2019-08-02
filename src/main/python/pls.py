@@ -165,9 +165,18 @@ class Pls():
             series.name = series_id
         series.id = series_id
         series.location = series_directory(config, series_id)
+        # TODO: rename these to: `previous`, `current` and `upcoming`?
+        # or: `last_played`, `to_play` and `upcoming`?
+        # TODO: generate them in the same function call (they're exercising the same data and logic)
+        # ALSO: maybe store only the "episode names" instead of the full path?
+        #Since they can have the season prefix.
         series.last_watched_episode_path = last_played_file(config, series_id, series.location)
         series.next_episode_path = file_to_play(config, series_id, series.location)
-        series.episode_after_the_current_one = next_file_to_play(series.location, series.next_episode_path.name)
+        if isinstance(series.next_episode_path, Error):
+            series.episode_after_the_current_one = Error(
+                4, f"Preceeding episode is error: {series.next_episode_path}")
+        else:
+            series.episode_after_the_current_one = next_file_to_play(series.location, series.next_episode_path.name)
         return series
 
     def set_next_and_save(self, config, series):
