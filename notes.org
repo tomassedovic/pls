@@ -4,6 +4,8 @@
 ** If we're at the beginning, we should say "No previous show"
 ** IF we're at the end: "Reached the end"
 ** Or maybe just set the "previous" and "next" buttons to the same show?
+* Generate pre/current/future series all at once
+** See the TODOs in pls.py
 * Mandle multi-directory series
 ** E.g. files with the following structure:
 Show/
@@ -13,6 +15,7 @@ Show/
 - S02/
   - e01.avi
   - e02.avi
+* Add Config file version so it can be updated
 * Make the "watch the last show" functionality less prominent?
 ** Right now, the obvious "Play Next" button is only slightly bigger
 ** But that's the entire raison d'etre of this app
