@@ -155,7 +155,10 @@ class Pls():
 
     def shows(self, config):
         for show_id in config.sections():
-            yield self.series(config, show_id)
+            try:
+                yield self.series(config, show_id)
+            except Exception:
+                pass
 
     def series(self, config, series_id):
         series = Series()
