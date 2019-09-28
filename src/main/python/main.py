@@ -71,6 +71,9 @@ class MainWindow(QWidget):
         self.play_next.setObjectName("play_next")
 
         self.settings = QPushButton("Settings");
+        self.settings.clicked.connect(
+            lambda: pls.play_file(pls.config_file_location()))
+
         about = QMessageBox(QMessageBox.NoIcon, "About pls", "<b>About pls</b>")
         about.setInformativeText(ABOUT_TEXT)
 
