@@ -152,16 +152,34 @@ class MainWindow(QWidget):
             self.play_next.setText(f"Play next:\n{next_path.name}")
 
 
+class ErrorWindow(QWidget):
+    def __init__(self, error_text):
+        super().__init__()
+        self.setWindowTitle("pls Error")
+        self.text = QLabel()
+        self.text.setWordWrap(True)
+        self.text.setText(error_text)
+        layout = QVBoxLayout()
+        layout.addWidget(self.text)
+        self.setLayout(layout)
+        self.resize(600, 320)
+
+
 if __name__ == '__main__':
     if len(sys.argv) <= 1:
-        context = ApplicationContext()       # 1. Instantiate ApplicationContext
+        context = ApplicationContext()
         stylesheet = context.get_resource('styles.qss')
         context.app.setStyleSheet(open(stylesheet).read())
-        window = MainWindow()
+        try:
+            window = MainWindow()
+        except Exception:
+            import traceback
+            e = traceback.format_exc()
+            window = ErrorWindow(e)
+            print(e)
         window.setObjectName("main-window")
-        #window.resize(640, 480)
         window.show()
-        exit_code = context.app.exec_()      # 2. Invoke appctxt.app.exec_()
+        exit_code = context.app.exec_()
         sys.exit(exit_code)
     else:
         print("TODO: use the CLI")
