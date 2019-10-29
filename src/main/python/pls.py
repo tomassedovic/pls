@@ -75,7 +75,7 @@ def file_to_play(config, series_id, directory):
     if to_play.exists():
         return to_play
     else:
-        return Error(1, f"File '{current_filename}' Not Found!")
+        return Error(1, f"File Not Found:\n'{current_filename}'")
 
 
 def next_file_to_play(series_directory, current_filename):
@@ -103,7 +103,7 @@ def last_played_file(config, series_id, series_directory):
     try:
         current_index = all_files.index(next_path)
     except ValueError:
-        return Error(2, f"File '{next_path}' Not Found!")
+        return Error(2, f"File Not Found:\n'{next_path.name}'")
 
     if current_index == 0:
         # We're at the beginning
