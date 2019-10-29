@@ -61,6 +61,7 @@ class MainWindow(QWidget):
 
         self.text = QLabel()
         self.text.setWordWrap(True)
+        self.text.setObjectName("text")
 
         self.play_last = QPushButton("Play Last")
         self.play_last.clicked.connect(lambda: self.play_last_action())

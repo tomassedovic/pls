@@ -1,4 +1,4 @@
-QLabel {
+QLabel#text {
   min-width: 20em;
   max-width: 30em;
 }
