@@ -155,7 +155,8 @@ class Pls():
         for show_id in config.sections():
             try:
                 yield self.series(config, show_id)
-            except Exception:
+            except Exception as e:
+                print(f"Error loading show {show_id}: {repr(e)}")
                 pass
 
     def series(self, config, series_id):
