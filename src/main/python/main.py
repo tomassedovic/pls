@@ -171,14 +171,14 @@ class MainWindow(QWidget):
             # TODO: make the text red
             self.play_last.setText(str(last_path))
         else:
-            self.play_last.setText(f"Replay last watched:\n{last_path}")
+            self.play_last.setText(f"Replay last watched:\n{last_path.relative_to(series.location)}")
 
         next_path = series.next_episode_path
         if isinstance(next_path, pls.Error):
             # TODO: make the text red
             self.play_next.setText(str(next_path))
         else:
-            self.play_next.setText(f"Play next:\n{next_path}")
+            self.play_next.setText(f"Play next:\n{next_path.relative_to(series.location)}")
 
 
 class ErrorWindow(QWidget):
