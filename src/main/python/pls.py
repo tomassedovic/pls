@@ -8,7 +8,7 @@ import subprocess
 import sys
 
 
-class Error():
+class Error(Exception):
     def __init__(self, code, message):
         self.code = code
         self.message = message
