@@ -59,9 +59,9 @@ class MainWindow(QWidget):
             self.shows.insertItem(index, show.name, show.id)
         self.shows.activated.connect(lambda: self.refresh_labels())
 
-        self.text = QLabel()
-        self.text.setWordWrap(True)
-        self.text.setObjectName("text")
+        self.location = QLabel()
+        self.location.setWordWrap(True)
+        self.location.setObjectName("location")
 
         self.play_last = QPushButton("Play Last")
         self.play_last.clicked.connect(lambda: self.play_last_action())
@@ -95,7 +95,7 @@ class MainWindow(QWidget):
 
         layout = QVBoxLayout()
         layout.addWidget(self.shows)
-        layout.addWidget(self.text)
+        layout.addWidget(self.location)
         layout.addWidget(play_buttons)
         layout.addWidget(meta_buttons)
         self.setLayout(layout)
@@ -152,7 +152,7 @@ class MainWindow(QWidget):
 
         if series is None or show_id != series.id:
             series = self.pls.series(config, show_id)
-        self.text.setText(f"Location: {series.location}")
+        self.location.setText(f"Location: {series.location}")
 
         last_path = series.last_watched_episode_path
         if isinstance(last_path, pls.Error):
