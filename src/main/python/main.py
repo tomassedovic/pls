@@ -1,6 +1,6 @@
 from fbs_runtime.application_context.PyQt5 import ApplicationContext
 from PyQt5.QtCore import Qt, QTimer
-from PyQt5.QtWidgets import QWidget, QLabel, QPushButton, QComboBox
+from PyQt5.QtWidgets import QWidget, QLabel, QListWidget, QPushButton, QComboBox
 from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QGroupBox, QMessageBox
 
 import sys
@@ -54,10 +54,11 @@ class MainWindow(QWidget):
         super().__init__()
         self.pls = pls.Pls()
 
-        self.shows = QComboBox()
+        self.shows = QListWidget()
         for (index, show) in enumerate(self.pls.shows(self.pls.config())):
-            self.shows.insertItem(index, show.name, show.id)
-        self.shows.activated.connect(lambda: self.refresh_labels())
+            self.shows.addItem(show.name)
+        self.shows.setCurrentRow(0)
+        self.shows.currentItemChanged.connect(lambda: self.refresh_labels())
 
         self.location = QLabel()
         self.location.setWordWrap(True)
@@ -110,6 +111,16 @@ class MainWindow(QWidget):
             mbox.setInformativeText(f"The configuration file could not be found.\nExpected location:\n'{conf_file}'")
             mbox.exec()
 
+    def current_show_id(self):
+        shows = list(self.pls.shows(self.pls.config()))
+        if shows and self.shows.currentRow() >= 0:
+            current_show = shows[self.shows.currentRow()]
+            assert current_show.name == self.shows.currentItem().text()
+            show_id = current_show.id
+        else:
+            show_id = None
+        return show_id
+
     def play_last_action(self):
         # NOTE(shadower): Briefly disable the button. This is to prevent
         # accidental double clicking.
@@ -118,7 +129,7 @@ class MainWindow(QWidget):
         timer.singleShot(3000, lambda: self.play_last.setEnabled(True))
 
         config = self.pls.config()
-        show_id = self.shows.currentData()
+        show_id = self.current_show_id()
         series = self.pls.series(config, show_id)
         series.replay_last_watched()
         # NOTE(shadower): we're not modifying the state in here, no need
@@ -133,7 +144,7 @@ class MainWindow(QWidget):
         timer.singleShot(3000, lambda: self.play_next.setEnabled(True))
 
         config = self.pls.config()
-        show_id = self.shows.currentData()
+        show_id = self.current_show_id()
         series = self.pls.series(config, show_id)
         series.play_next()
         self.pls.set_next_and_save(config, series)
@@ -142,7 +153,8 @@ class MainWindow(QWidget):
     def refresh_labels(self, config=None, series=None):
         if config is None:
             config = self.pls.config()
-        show_id = self.shows.currentData()
+
+        show_id = self.current_show_id()
         if show_id is None:
             # There's no config or it has no shows. Nothing else to do here.
             mbox = QMessageBox(QMessageBox.Critical, "Error: No shows loaded", "<b>Error: No shows loaded.</b>")
