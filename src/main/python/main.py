@@ -142,6 +142,13 @@ class MainWindow(QWidget):
         if config is None:
             config = self.pls.config()
         show_id = self.shows.currentData()
+        if show_id is None:
+            # There's no config or it has no shows. Nothing else to do here.
+            mbox = QMessageBox(QMessageBox.Critical, "Error: No shows loaded", "<b>Error: No shows loaded.</b>")
+            mbox.setInformativeText(f"Could not load any shows from the configuration file. Either it doesn't exist or it's empty.\n\nTry clicking on the Settings button.")
+            mbox.exec()
+            return
+
         if series is None or show_id != series.id:
             series = self.pls.series(config, show_id)
         self.text.setText(f"Location: {series.location}")
