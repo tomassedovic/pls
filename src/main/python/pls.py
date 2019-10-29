@@ -18,17 +18,14 @@ class Error(Exception):
 
 
 def natural_sort(l):
-    convert = lambda text: int(text) if text.isdigit() else text.lower()
-    alphanum_key = lambda key: [ convert(c) for c in re.split('([0-9]+)', key) ]
+    convert = lambda text: int(str(text)) if str(text).isdigit() else str(text).lower()
+    alphanum_key = lambda key: [convert(c) for c in re.split('([0-9]+)', str(key))]
     return sorted(l, key = alphanum_key)
 
 
 def list_sorted_files(directory_path):
-    try:
-        files = os.listdir(directory_path)
-    except FileNotFoundError:
-        files = []
-    return natural_sort(files)
+    result = [p for p in directory_path.glob('**/*') if p.is_file()]
+    return natural_sort(result)
 
 
 def config_file_location():
@@ -83,41 +80,42 @@ def file_to_play(config, series_id, directory):
 
 def next_file_to_play(series_directory, current_filename):
     all_files = list_sorted_files(series_directory)
+    current_path = Path(series_directory, current_filename)
     try:
-        current_index = all_files.index(current_filename)
+        current_index = all_files.index(current_path)
     except ValueError:
         # TODO(shadower): handle this properly. File not found?
         return ""
 
     try:
-        next_filename = all_files[current_index + 1]
+        next_path = all_files[current_index + 1]
     except IndexError:
         # TODO(shadower): handle this properly. Reached the end?
         return ""
 
-    return next_filename
+    return next_path
 
 
 def last_played_file(config, series_id, series_directory):
     all_files = list_sorted_files(series_directory)
 
-    next_filename = config[series_id]['next']
+    next_path = Path(series_directory, config[series_id]['next'])
     try:
-        current_index = all_files.index(next_filename)
+        current_index = all_files.index(next_path)
     except ValueError:
-        return Error(2, f"File '{next_filename}' Not Found!")
+        return Error(2, f"File '{next_path}' Not Found!")
 
     if current_index == 0:
         # We're at the beginning
         # TODO: handle this differently? Show a message instead?
-        return Path(series_directory) / next_filename
+        return next_path
 
     try:
-        last_played_filename = all_files[current_index - 1]
+        last_played_path = all_files[current_index - 1]
     except IndexError:
         return Error(3, "No Previous File Exists!")
 
-    return Path(series_directory) / last_played_filename
+    return last_played_path
 
 
 def play_file(file_path):
@@ -179,13 +177,15 @@ class Pls():
             series.episode_after_the_current_one = Error(
                 4, f"Preceeding episode is error: {series.next_episode_path}")
         else:
-            series.episode_after_the_current_one = next_file_to_play(series.location, series.next_episode_path.name)
+            series.episode_after_the_current_one = next_file_to_play(series.location, series.next_episode_path.relative_to(series.location))
         return series
 
     def set_next_and_save(self, config, series):
-        next_filename = series.episode_after_the_current_one
+        if not series.episode_after_the_current_one:
+            return
+        next_filename = series.episode_after_the_current_one.relative_to(series.location)
         if next_filename:
-            config[series.id]['next'] = next_filename
+            config[series.id]['next'] = str(next_filename)
             series.next()
             config_path = config_file_location()
             save_config(config, config_path)
@@ -206,8 +206,8 @@ class Series():
 
     def next(self):
         self.last_watched_episode_path = self.next_episode_path
-        self.next_episode_path = self.location / self.episode_after_the_current_one
-        self.episode_after_the_current_one = next_file_to_play(self.location, self.next_episode_path.name)
+        self.next_episode_path = self.episode_after_the_current_one
+        self.episode_after_the_current_one = next_file_to_play(self.location, self.next_episode_path.relative_to(self.location))
 
 
 class Action(Enum):
