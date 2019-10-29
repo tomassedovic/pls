@@ -72,7 +72,7 @@ class MainWindow(QWidget):
 
         self.settings = QPushButton("Settings");
         self.settings.clicked.connect(
-            lambda: pls.play_file(pls.config_file_location()))
+            lambda: self.open_settings())
 
         about = QMessageBox(QMessageBox.NoIcon, "About pls", "<b>About pls</b>")
         about.setInformativeText(ABOUT_TEXT)
@@ -99,6 +99,15 @@ class MainWindow(QWidget):
         layout.addWidget(meta_buttons)
         self.setLayout(layout)
         self.refresh_labels()
+
+    def open_settings(self):
+        conf_file = pls.config_file_location()
+        if conf_file.exists():
+            pls.play_file(conf_file)
+        else:
+            mbox = QMessageBox(QMessageBox.Critical, "Error: Config file not found", "<b>Error: Config file not found.</b>")
+            mbox.setInformativeText(f"The configuration file could not be found.\nExpected location:\n'{conf_file}'")
+            mbox.exec()
 
     def play_last_action(self):
         # NOTE(shadower): Briefly disable the button. This is to prevent
