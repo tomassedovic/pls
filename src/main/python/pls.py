@@ -131,7 +131,10 @@ def play_file(file_path):
     elif system == 'Windows':
         os.startfile(file_path)
     elif system == 'Darwin':
-        raise NotImplementedError("macOS systems are not supported yet")
+        # NOTE: `open` returns immediately by default
+        result = subprocess.run(("open", file_path))
+        if result.returncode != 0:
+            print("Error playing video:\n", result)
     else:
         raise NotImplementedError(f"Unknown platform {system}")
 
