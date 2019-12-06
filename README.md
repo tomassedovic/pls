@@ -20,9 +20,15 @@ It's a GPL'd cross-platform GUI development kit using Python and Qt.
 
 ### Building a tarball
 
+    $ make build
+
+Or with these commands:
+
     $ fbs freeze  # executable is in target/pls/pls
     $ cd target/
     $ tar -czf pls.tgz pls
+
+The executable and all the dependencies will be in `target/pls/`
 
 ### Building an RPM
 
