@@ -44,7 +44,10 @@ def config_file_location():
         config_path = base_path / 'pls' / 'pls.toml'
         return config_path
     elif system == 'Darwin':
-        raise NotImplementedError("macOS systems are not supported yet")
+        # https://developer.apple.com/library/archive/documentation/General/Conceptual/MOSXAppProgrammingGuide/AppRuntime/AppRuntime.html
+        base_path = Path.home() / 'Library' / 'Application Support'
+        config_path = base_path / 'pls' / 'pls.toml'
+        return config_path
     else:
         raise NotImplementedError(f"Unknown platform {system}")
 
