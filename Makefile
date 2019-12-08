@@ -7,5 +7,5 @@ run:
 .PHONY: run
 
 build:
-	scripts/build.sh
+	bin/build.sh
 .PHONY: build
