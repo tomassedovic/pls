@@ -122,6 +122,7 @@ def last_played_file(config, series_id, series_directory):
 
 
 def play_file(file_path):
+    """Open the file using standard method for the platform."""
     system = platform.system()
     if system == 'Linux':
         # NOTE: `xdg-open` returns immediately
