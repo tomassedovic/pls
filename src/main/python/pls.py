@@ -74,7 +74,7 @@ def series_directory(config, series):
 
 def file_to_play(config, series_id, directory):
     current_filename = config[series_id]['next']
-    to_play = Path(directory) / current_filename
+    to_play = Path(directory) / normalise_path_separators(current_filename)
     if to_play.exists():
         return to_play
     else:
@@ -83,7 +83,7 @@ def file_to_play(config, series_id, directory):
 
 def next_file_to_play(series_directory, current_filename):
     all_files = list_sorted_files(series_directory)
-    current_path = Path(series_directory, current_filename)
+    current_path = Path(series_directory, normalise_path_separators(current_filename))
     try:
         current_index = all_files.index(current_path)
     except ValueError:
@@ -98,11 +98,20 @@ def next_file_to_play(series_directory, current_filename):
 
     return next_path
 
+def normalise_path_separators(p):
+    '''
+    In case of nested dirs, Windows will save path with a backslash
+    but unix expects a forward slash.
+
+    This will turn both slashes in a path into the platform-appropriate one.
+    '''
+    return Path(str(p).replace('\\', os.path.sep).replace('/', os.path.sep))
+
 
 def last_played_file(config, series_id, series_directory):
     all_files = list_sorted_files(series_directory)
 
-    next_path = Path(series_directory, config[series_id]['next'])
+    next_path = Path(series_directory, normalise_path_separators(config[series_id]['next']))
     try:
         current_index = all_files.index(next_path)
     except ValueError:
@@ -118,7 +127,7 @@ def last_played_file(config, series_id, series_directory):
     except IndexError:
         return Error(3, "No Previous File Exists!")
 
-    return last_played_path
+    return normalise_path_separators(last_played_path)
 
 
 def play_file(file_path):
