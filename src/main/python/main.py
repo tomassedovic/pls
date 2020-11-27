@@ -195,20 +195,23 @@ class ErrorWindow(QWidget):
 
 
 if __name__ == '__main__':
-    if len(sys.argv) <= 1:
+    # NOTE: MacOS apps (launched as apps rather than `fbs freeze`) apparently
+    # receive an EXTRA CLI argument (i.e. `sys.argv == 2`). So we can't naively
+    # only show the window when `sys.argv == 1`.
+    #
+    # If we ever want to add a CLI, we'll need to handle that differently.
+    # Probably with a separate file.
+    try:
         context = ApplicationContext()
         stylesheet = context.get_resource('styles.qss')
         context.app.setStyleSheet(open(stylesheet).read())
-        try:
-            window = MainWindow()
-        except Exception:
-            import traceback
-            e = traceback.format_exc()
-            window = ErrorWindow(e)
-            print(e)
-        window.setObjectName("main-window")
-        window.show()
-        exit_code = context.app.exec_()
-        sys.exit(exit_code)
-    else:
-        print("TODO: use the CLI")
+        window = MainWindow()
+    except Exception:
+        import traceback
+        e = traceback.format_exc()
+        window = ErrorWindow(e)
+        print(e)
+    window.setObjectName("main-window")
+    window.show()
+    exit_code = context.app.exec_()
+    sys.exit(exit_code)
