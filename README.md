@@ -24,11 +24,25 @@ It's a GPL'd cross-platform GUI development kit using Python and Qt.
 
 Or with these commands:
 
+    $ source venv/bin/activate
     $ fbs freeze  # executable is in target/pls/pls
     $ cd target/
     $ tar -czf pls.tgz pls
 
 The executable and all the dependencies will be in `target/pls/`
+
+
+### Building a Macos pls.app
+
+    $ make build
+
+Or with these commands:
+
+    $ source venv/bin/activate
+    $ fbs freeze
+
+The app and all the dependencies will be in `target/pls.app`. You can open it via Finder or by running `open target/pls.app`.
+
 
 ### Building an RPM
 
@@ -37,6 +51,14 @@ The executable and all the dependencies will be in `target/pls/`
     $ sudo dnf install rubygems ruby-devel rpm-build
     $ gem install -N fpm
     $ fbs installer
+
+### Building a Macos installer (*.dmg)
+
+    $ source venv/bin/activate
+    $ fbs installer
+
+The installer will be in: `target/pls.dmg`.
+    
 
 ### Building a Windows executable
 
@@ -50,6 +72,9 @@ The executable and all the dependencies will be in `target/pls/`
 * Possibly add `C:\Windows\System32`, `C:\Windows\SysWOW64` to PATH
 
 https://build-system.fman.io/pyqt-exe-creation/
+
+
+
 
 
 ## License
