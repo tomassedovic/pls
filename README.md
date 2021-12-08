@@ -13,10 +13,13 @@ It's a GPL'd cross-platform GUI development kit using Python and Qt.
 ### Running the project
 
     $ cd pls
-    $ python3 -m venv venv
+    $ python3.6 -m venv venv
     $ source venv/bin/activate
     $ pip install -r requirements.txt
     $ fbs run
+
+NOTE: as of 2021-03-25, the FLOSS version of fbs only works with Python 3.5 and
+3.6. Make sure you install one of those versions otherwise the build won't work.
 
 ### Building a tarball
 
@@ -58,7 +61,6 @@ The app and all the dependencies will be in `target/pls.app`. You can open it vi
     $ fbs installer
 
 The installer will be in: `target/pls.dmg`.
-    
 
 ### Building a Windows executable
 
