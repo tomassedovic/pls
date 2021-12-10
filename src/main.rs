@@ -1,3 +1,5 @@
+mod window;
+
 fn create_display(
     event_loop: &glutin::event_loop::EventLoop<()>,
 ) -> (
@@ -10,7 +12,7 @@ fn create_display(
             width: 800.0,
             height: 600.0,
         })
-        .with_title("egui_glow example");
+        .with_title("pls");
 
     let gl_window = unsafe {
         glutin::ContextBuilder::new()
@@ -44,20 +46,11 @@ fn main() {
         let mut redraw = || {
             egui.begin_frame(gl_window.window());
 
-            let mut quit = false;
-
-            egui::SidePanel::left("my_side_panel").show(egui.ctx(), |ui| {
-                ui.heading("Hello World!");
-                if ui.button("Quit").clicked() {
-                    quit = true;
-                }
-            });
+            egui::CentralPanel::default().show(egui.ctx(), window::show);
 
             let (needs_repaint, shapes) = egui.end_frame(gl_window.window());
 
-            *control_flow = if quit {
-                glutin::event_loop::ControlFlow::Exit
-            } else if needs_repaint {
+            *control_flow = if needs_repaint {
                 gl_window.window().request_redraw();
                 glutin::event_loop::ControlFlow::Poll
             } else {
