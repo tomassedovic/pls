@@ -41,12 +41,15 @@ fn main() {
     let (gl_window, gl) = create_display(&event_loop);
 
     let mut egui = egui_glow::EguiGlow::new(&gl_window, &gl);
+    let mut state = window::State::new();
 
     event_loop.run(move |event, _, control_flow| {
         let mut redraw = || {
             egui.begin_frame(gl_window.window());
 
-            egui::CentralPanel::default().show(egui.ctx(), window::show);
+            egui::CentralPanel::default().show(egui.ctx(), |ui| {
+                window::show(&mut state, ui);
+            });
 
             let (needs_repaint, shapes) = egui.end_frame(gl_window.window());
 

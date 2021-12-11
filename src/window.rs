@@ -1,4 +1,15 @@
-pub fn show(ui: &mut egui::Ui) {
+#[derive(Default)]
+pub struct State {
+    selected_index: usize,
+}
+
+impl State {
+    pub fn new() -> Self {
+        Self::default()
+    }
+}
+
+pub fn show(state: &mut State, ui: &mut egui::Ui) {
     ui.heading("Hello World!");
 
     egui::ScrollArea::vertical()
@@ -7,8 +18,13 @@ pub fn show(ui: &mut egui::Ui) {
         .always_show_scroll(true)
         .show(ui, |ui| {
             for i in 0..20 {
-                if ui.selectable_label(i == 3, format!("{} item", i)).clicked() {
+                let selected = i == state.selected_index;
+                if ui
+                    .selectable_label(selected, format!("{} item", i))
+                    .clicked()
+                {
                     println!("Clicked item: {}", i);
+                    state.selected_index = i;
                 };
             }
         });
