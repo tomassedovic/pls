@@ -2,9 +2,9 @@ use std::{fs::File, io::Read};
 
 use toml_edit::Document;
 
-#[derive(Default)]
 pub struct State {
     pub selected_index: usize,
+    pub config: Document,
 }
 
 impl State {
@@ -15,8 +15,10 @@ impl State {
             input
         };
         let doc = toml.parse::<Document>()?;
-        dbg!(doc);
 
-        Ok(Self::default())
+        Ok(State {
+            selected_index: 0,
+            config: doc,
+        })
     }
 }
