@@ -38,21 +38,11 @@ fn create_display(
 }
 
 fn run() -> Result<(), Box<dyn std::error::Error>> {
-    use toml_edit::{Document, Value};
-    let toml = {
-        use std::io::Read;
-        let mut input = String::new();
-        std::fs::File::open("test/pls.toml")?.read_to_string(&mut input)?;
-        input
-    };
-    let mut doc = toml.parse::<Document>()?;
-    dbg!(doc);
-
     let event_loop = glutin::event_loop::EventLoop::with_user_event();
     let (gl_window, gl) = create_display(&event_loop);
 
     let mut egui = egui_glow::EguiGlow::new(&gl_window, &gl);
-    let mut state = state::State::new();
+    let mut state = state::State::new()?;
 
     event_loop.run(move |event, _, control_flow| {
         let mut redraw = || {
