@@ -8,13 +8,10 @@ pub fn show(state: &mut State, ui: &mut egui::Ui) {
         .auto_shrink([false, false])
         .always_show_scroll(true)
         .show(ui, |ui| {
-            for (index, (_key, series)) in state.config.iter().enumerate() {
-                let selected = index == state.selected_index;
+            for (key, series) in state.config.iter() {
                 let name = series.get("name").map(|v| v.as_str()).flatten();
                 if let Some(name) = name {
-                    if ui.selectable_label(selected, name).clicked() {
-                        state.selected_index = index;
-                    }
+                    ui.selectable_value(&mut state.selected_key, key.to_string(), name);
                 }
             }
         });

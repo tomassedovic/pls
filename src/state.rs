@@ -3,7 +3,7 @@ use std::{fs::File, io::Read};
 use toml_edit::Document;
 
 pub struct State {
-    pub selected_index: usize,
+    pub selected_key: String,
     pub config: Document,
 }
 
@@ -15,9 +15,14 @@ impl State {
             input
         };
         let doc = toml.parse::<Document>()?;
+        let first_key = doc
+            .iter()
+            .next()
+            .map(|(key, _series)| key)
+            .unwrap_or_default();
 
         Ok(State {
-            selected_index: 0,
+            selected_key: first_key.to_string(),
             config: doc,
         })
     }
