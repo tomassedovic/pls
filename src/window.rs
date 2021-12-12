@@ -17,14 +17,17 @@ pub fn show(state: &mut State, ui: &mut egui::Ui) {
         });
 
     if ui.button("Play Next").clicked() {
-        println!("Playing next");
+        println!("Clicked: Playing next");
+        if let Some(series) = state.config.get(&state.selected_key) {
+            println!("{}", series);
+        }
     };
 
     if ui.button("About").clicked() {
-        println!("About");
+        println!("Clicked: About");
     };
 
     if ui.button("Settings").clicked() {
-        println!("Settings");
+        println!("Clicked: Settings");
     };
 }
