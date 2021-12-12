@@ -38,6 +38,14 @@ fn create_display(
 }
 
 fn main() -> anyhow::Result<()> {
+    let qualifier = ""; // NOTE: something like com.mydomain
+    let organisation = ""; // NOTE: Try Jumping
+    let application = "pls";
+
+    let config_dir = directories::ProjectDirs::from(qualifier, organisation, application)
+        .map(|d| d.config_dir().to_owned());
+    println!("Config location: {:?}", config_dir);
+
     let mut state = state::State::new()?;
 
     let event_loop = glutin::event_loop::EventLoop::with_user_event();

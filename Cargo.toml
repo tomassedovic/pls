@@ -8,6 +8,7 @@ exclude = ["/test/**", "/venv/**", "/bin/**"]
 
 [dependencies]
 anyhow = "1.0"
+directories = "4.0"
 egui_glow = { version = "0.15", default-features = false, features = ["default_fonts", "links"] }
 # NOTE: Using a wildcard import to have the same version as what's used by egui_glow:
 glow = "*"
