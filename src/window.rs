@@ -1,13 +1,4 @@
-#[derive(Default)]
-pub struct State {
-    selected_index: usize,
-}
-
-impl State {
-    pub fn new() -> Self {
-        Self::default()
-    }
-}
+use crate::state::State;
 
 pub fn show(state: &mut State, ui: &mut egui::Ui) {
     ui.heading("Hello World!");

@@ -1,3 +1,4 @@
+mod state;
 mod window;
 
 fn create_display(
@@ -51,7 +52,7 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
     let (gl_window, gl) = create_display(&event_loop);
 
     let mut egui = egui_glow::EguiGlow::new(&gl_window, &gl);
-    let mut state = window::State::new();
+    let mut state = state::State::new();
 
     event_loop.run(move |event, _, control_flow| {
         let mut redraw = || {
