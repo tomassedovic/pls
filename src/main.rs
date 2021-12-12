@@ -37,12 +37,13 @@ fn create_display(
     (gl_window, gl)
 }
 
-fn run() -> Result<(), Box<dyn std::error::Error>> {
+fn main() -> anyhow::Result<()> {
+    let mut state = state::State::new()?;
+
     let event_loop = glutin::event_loop::EventLoop::with_user_event();
     let (gl_window, gl) = create_display(&event_loop);
 
     let mut egui = egui_glow::EguiGlow::new(&gl_window, &gl);
-    let mut state = state::State::new()?;
 
     event_loop.run(move |event, _, control_flow| {
         let mut redraw = || {
@@ -106,14 +107,6 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
             _ => (),
         }
     });
-}
 
-fn main() {
-    std::process::exit(match run() {
-        Ok(_) => 0,
-        Err(e) => {
-            eprintln!("{}", e);
-            1
-        }
-    });
+    Ok(())
 }

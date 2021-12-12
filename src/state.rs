@@ -6,7 +6,7 @@ pub struct State {
 }
 
 impl State {
-    pub fn new() -> Result<Self, Box<dyn Error>> {
+    pub fn new() -> Result<Self, anyhow::Error> {
         use toml_edit::{Document, Value};
         let toml = {
             use std::io::Read;
