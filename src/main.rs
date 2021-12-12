@@ -36,7 +36,17 @@ fn create_display(
     (gl_window, gl)
 }
 
-fn main() {
+fn run() -> Result<(), Box<dyn std::error::Error>> {
+    use toml_edit::{Document, Value};
+    let toml = {
+        use std::io::Read;
+        let mut input = String::new();
+        std::fs::File::open("test/pls.toml")?.read_to_string(&mut input)?;
+        input
+    };
+    let mut doc = toml.parse::<Document>()?;
+    dbg!(doc);
+
     let event_loop = glutin::event_loop::EventLoop::with_user_event();
     let (gl_window, gl) = create_display(&event_loop);
 
@@ -103,6 +113,16 @@ fn main() {
             }
 
             _ => (),
+        }
+    });
+}
+
+fn main() {
+    std::process::exit(match run() {
+        Ok(_) => 0,
+        Err(e) => {
+            eprintln!("{}", e);
+            1
         }
     });
 }

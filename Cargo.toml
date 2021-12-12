@@ -1,7 +1,9 @@
 [package]
 name = "pls"
 version = "0.1.0"
+authors = ["Tomas Sedovic <tomas@sedovic.cz>"]
 edition = "2021"
+exclude = ["/test/**", "/venv/**", "/bin/**"]
 
 
 [dependencies]
