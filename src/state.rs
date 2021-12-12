@@ -1,5 +1,3 @@
-use std::{fs::File, io::Read};
-
 use toml_edit::Document;
 
 pub struct State {
@@ -9,11 +7,7 @@ pub struct State {
 
 impl State {
     pub fn new() -> Result<Self, anyhow::Error> {
-        let toml = {
-            let mut input = String::new();
-            File::open("test/pls.toml")?.read_to_string(&mut input)?;
-            input
-        };
+        let toml = std::fs::read_to_string("test/pls.toml")?;
         let doc = toml.parse::<Document>()?;
         let first_key = doc
             .iter()
