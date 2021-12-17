@@ -1,3 +1,4 @@
+mod show;
 mod state;
 mod window;
 

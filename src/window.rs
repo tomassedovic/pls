@@ -8,18 +8,17 @@ pub fn show(state: &mut State, ui: &mut egui::Ui) {
         .auto_shrink([false, false])
         .always_show_scroll(true)
         .show(ui, |ui| {
-            for (key, series) in state.config.iter() {
-                let name = series.get("name").map(|v| v.as_str()).flatten();
-                if let Some(name) = name {
-                    ui.selectable_value(&mut state.selected_key, key.to_string(), name);
-                }
+            for (key, show) in &state.shows {
+                ui.selectable_value(&mut state.selected_key, key.to_string(), &show.name);
             }
         });
 
     if ui.button("Play Next").clicked() {
         println!("Clicked: Playing next");
-        if let Some(series) = state.config.get(&state.selected_key) {
-            println!("{}", series);
+        // TODO: https://crates.io/crates/opener
+        // This should open a file on windows/linux/macos
+        if let Some(show) = state.shows.get(&state.selected_key) {
+            println!("Selected: {:?}", show);
         }
     };
 
