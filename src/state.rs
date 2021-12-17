@@ -1,6 +1,6 @@
 use crate::show::Show;
 
-use std::collections::HashMap;
+use std::{collections::HashMap, path::PathBuf};
 
 use toml_edit::Document;
 
@@ -24,9 +24,13 @@ impl State {
         let mut shows = HashMap::new();
         for (key, show) in doc.iter() {
             let name = show.get("name").map(|v| v.as_str()).flatten();
-            if let Some(name) = name {
+            let dir = show.get("directory").map(|v| v.as_str()).flatten();
+            let next = show.get("next").map(|v| v.as_str()).flatten();
+            if let (Some(name), Some(dir), Some(next)) = (name, dir, next) {
                 let show = Show {
                     name: name.to_string(),
+                    dir: PathBuf::from(dir),
+                    next: PathBuf::from(next),
                 };
                 shows.insert(key.to_string(), show);
             }
