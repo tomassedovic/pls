@@ -8,8 +8,10 @@ pub fn show(state: &mut State, ui: &mut egui::Ui) {
         .auto_shrink([false, false])
         .always_show_scroll(true)
         .show(ui, |ui| {
-            for (key, show) in &state.shows {
-                ui.selectable_value(&mut state.selected_key, key.to_string(), &show.name);
+            for key in &state.ordered_keys {
+                if let Some(show) = &state.shows.get(key) {
+                    ui.selectable_value(&mut state.selected_key, key.to_string(), &show.name);
+                }
             }
         });
 

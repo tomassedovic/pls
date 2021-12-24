@@ -7,6 +7,7 @@ use toml_edit::Document;
 #[derive(Debug)]
 pub struct State {
     pub selected_key: String,
+    pub ordered_keys: Vec<String>,
     pub config: Document,
     pub shows: HashMap<String, Show>,
     pub error: Option<String>,
@@ -23,8 +24,10 @@ impl State {
             .map(|(key, _series)| key)
             .unwrap_or_default();
 
+        let mut ordered_keys = vec![];
         let mut shows = HashMap::new();
         for (key, show) in doc.iter() {
+            ordered_keys.push(key.to_string());
             let name = show.get("name").map(|v| v.as_str()).flatten();
             let dir_default = show.get("directory").map(|v| v.as_str()).flatten();
             let hostname = hostname::get()
@@ -57,6 +60,7 @@ impl State {
 
         Ok(State {
             selected_key: first_key.to_string(),
+            ordered_keys,
             config: doc,
             shows,
             error: None,
