@@ -13,6 +13,7 @@ pub struct State {
 
 impl State {
     pub fn new() -> Result<Self, anyhow::Error> {
+        // TODO: get the config location passed from main
         let toml = std::fs::read_to_string("test/pls.toml")?;
         let doc = toml.parse::<Document>()?;
         let first_key = doc
@@ -24,9 +25,25 @@ impl State {
         let mut shows = HashMap::new();
         for (key, show) in doc.iter() {
             let name = show.get("name").map(|v| v.as_str()).flatten();
-            let dir = show.get("directory").map(|v| v.as_str()).flatten();
+            let dir_default = show.get("directory").map(|v| v.as_str()).flatten();
+            let hostname = hostname::get()
+                .ok()
+                .map(|cstr| cstr.into_string().ok())
+                .flatten();
+            dbg!(&hostname);
+            let dir_hostname = hostname
+                .map(|hostname| {
+                    show.get(format!("directory_{}", hostname))
+                        .map(|v| v.as_str())
+                })
+                .flatten()
+                .unwrap_or(dir_default);
+            dbg!(&key);
+            dbg!(&dir_default);
+            dbg!(&dir_hostname);
+
             let next = show.get("next").map(|v| v.as_str()).flatten();
-            if let (Some(name), Some(dir), Some(next)) = (name, dir, next) {
+            if let (Some(name), Some(dir), Some(next)) = (name, dir_hostname, next) {
                 let show = Show {
                     name: name.to_string(),
                     dir: PathBuf::from(dir),
