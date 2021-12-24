@@ -9,6 +9,7 @@ pub struct State {
     pub selected_key: String,
     pub config: Document,
     pub shows: HashMap<String, Show>,
+    pub error: Option<String>,
 }
 
 impl State {
@@ -44,6 +45,7 @@ impl State {
 
             let next = show.get("next").map(|v| v.as_str()).flatten();
             if let (Some(name), Some(dir), Some(next)) = (name, dir_hostname, next) {
+                let next = next.replace(&['\\', '/'][..], &std::path::MAIN_SEPARATOR.to_string());
                 let show = Show {
                     name: name.to_string(),
                     dir: PathBuf::from(dir),
@@ -57,6 +59,7 @@ impl State {
             selected_key: first_key.to_string(),
             config: doc,
             shows,
+            error: None,
         })
     }
 }
