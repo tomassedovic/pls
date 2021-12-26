@@ -36,19 +36,37 @@ impl Show {
     }
 
     pub fn episodes(&self) -> Vec<PathBuf> {
-        let mut result: Vec<PathBuf> = vec![];
-        let _ = visit_dirs(&self.dir, &mut |entry: &DirEntry| {
-            let path: PathBuf = entry.path();
-            assert!(path.starts_with(&self.dir));
-            result.push(path);
-        });
-
-        result.sort_by(|a, b| {
-            HumaneOrder::humane_cmp(&a.display().to_string(), &b.display().to_string())
-        });
-
-        result
+        all_paths_in_dir(&self.dir)
     }
+}
+
+pub fn all_paths_in_dir(dir: &Path) -> Vec<PathBuf> {
+    let mut result = vec![];
+    let _ = visit_dirs(dir, &mut |entry: &DirEntry| {
+        let path: PathBuf = entry.path();
+        assert!(path.starts_with(dir));
+        result.push(path);
+    });
+
+    result.sort_by(|a, b| {
+        HumaneOrder::humane_cmp(&a.display().to_string(), &b.display().to_string())
+    });
+
+    result
+}
+
+pub fn all_files_in_dir(dir: &Path) -> Vec<String> {
+    use humanesort::prelude::*;
+    let mut result = vec![];
+    let _ = visit_dirs(dir, &mut |entry: &DirEntry| {
+        let path: PathBuf = entry.path();
+        assert!(path.starts_with(dir));
+        result.push(path.display().to_string());
+    });
+
+    result.humane_sort();
+
+    result
 }
 
 /// Adapted from: https://doc.rust-lang.org/std/fs/fn.read_dir.html#examples
