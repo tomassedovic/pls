@@ -34,7 +34,6 @@ impl State {
                 .ok()
                 .map(|cstr| cstr.into_string().ok())
                 .flatten();
-            dbg!(&hostname);
             let dir_hostname = hostname
                 .map(|hostname| {
                     show.get(format!("directory_{}", hostname))
@@ -42,9 +41,6 @@ impl State {
                 })
                 .flatten()
                 .unwrap_or(dir_default);
-            dbg!(&key);
-            dbg!(&dir_default);
-            dbg!(&dir_hostname);
 
             let next = show.get("next").map(|v| v.as_str()).flatten();
             if let (Some(name), Some(dir), Some(next)) = (name, dir_hostname, next) {

@@ -47,7 +47,6 @@ impl Show {
             HumaneOrder::humane_cmp(&a.display().to_string(), &b.display().to_string())
         });
 
-        dbg!(&result);
         result
     }
 }

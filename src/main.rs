@@ -46,6 +46,7 @@ fn main() -> anyhow::Result<()> {
     let config_dir = directories::ProjectDirs::from(qualifier, organisation, application)
         .map(|d| d.config_dir().to_owned());
     println!("Config location: {:?}", config_dir);
+    println!("Hostname: {:?}", hostname::get());
 
     let mut state = state::State::new()?;
 
