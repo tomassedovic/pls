@@ -1,4 +1,4 @@
-use crate::show::Show;
+use crate::show::{self, Show};
 
 use std::{collections::HashMap, path::PathBuf};
 
@@ -35,6 +35,7 @@ impl State {
                 .map(|cstr| cstr.into_string().ok())
                 .flatten();
             let dir_hostname = hostname
+                .clone()
                 .map(|hostname| {
                     show.get(format!("directory_{}", hostname))
                         .map(|v| v.as_str())
@@ -42,15 +43,55 @@ impl State {
                 .flatten()
                 .unwrap_or(dir_default);
 
+            let name = name.unwrap_or_else(|| {
+                eprintln!(
+                    "Warning: the show doesn't have a `name` set. Using the `key` as fallback: `{}`",
+                    key
+                );
+                key
+            });
             let next = show.get("next").map(|v| v.as_str()).flatten();
-            if let (Some(name), Some(dir), Some(next)) = (name, dir_hostname, next) {
-                let next = next.replace(&['\\', '/'][..], &std::path::MAIN_SEPARATOR.to_string());
-                let show = Show {
-                    name: name.to_string(),
-                    dir: PathBuf::from(dir),
-                    next: PathBuf::from(next),
-                };
-                shows.insert(key.to_string(), show);
+
+            if let Some(dir) = dir_hostname {
+                let dir = PathBuf::from(dir);
+                // Fallback to the first file if no `next` key specified:
+                let next = next.map_or_else(
+                    || {
+                        let first = show::all_files_in_dir(&dir).first().map(String::from);
+                        eprintln!("Warning: no `next` key specified for show `{}`", key);
+                        println!(
+                            "Falling back to the first file in the directory: `{:?}`.",
+                            first
+                        );
+                        first
+                    },
+                    |s| Some(String::from(s)),
+                );
+
+                if let Some(next) = next {
+                    let next =
+                        next.replace(&['\\', '/'][..], &std::path::MAIN_SEPARATOR.to_string());
+                    let show = Show {
+                        name: name.into(),
+                        dir,
+                        next: next.into(),
+                    };
+                    shows.insert(key.to_string(), show);
+                } else {
+                    eprintln!("Error: could not load show `{}`:", key);
+                    eprintln!(
+                        "No `next` key and couldn't load the first show in directory `{}`",
+                        dir.display()
+                    );
+                }
+            } else {
+                eprintln!("Error: could not load show `{}`:", key);
+                if dir_hostname.is_none() {
+                    eprintln!(
+                        "Neither the `directory`, nor `directory_{}` key was specified.",
+                        hostname.unwrap_or_else(|| "hostname".to_string())
+                    );
+                }
             }
         }
 
