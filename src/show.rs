@@ -15,13 +15,11 @@ impl Show {
     pub fn advance_to_next_episode(&mut self) {
         let eps = self.episodes();
         let mut iter = eps.iter();
-        //let current_episode = self.current_episode().display().to_string();
         let current_episode = self.current_episode();
         // Find the current episode
         iter.find(|episode| episode == &&current_episode);
         // Get the next one:
         let next_episode = iter.next();
-        dbg!(next_episode);
         if let Some(next) = next_episode {
             let full = PathBuf::from(next);
             let stripped = full.strip_prefix(&self.dir);

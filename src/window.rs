@@ -20,7 +20,6 @@ pub fn show(state: &mut State, ui: &mut egui::Ui) {
         if let Some(show) = state.shows.get_mut(&state.selected_key) {
             println!("Selected: {:?}", show);
             println!("{}", show.current_episode().display());
-            // TODO: handle errors
             let current_episode = show.current_episode();
             if !current_episode.exists() {
                 state.error = Some(format!(
