@@ -1,4 +1,4 @@
-use crate::show::{self, Show};
+use crate::show::Show;
 
 use std::{collections::HashMap, path::PathBuf};
 
@@ -57,7 +57,9 @@ impl State {
                 // Fallback to the first file if no `next` key specified:
                 let next = next.map_or_else(
                     || {
-                        let first = show::all_files_in_dir(&dir).first().map(String::from);
+                        let first = crate::util::all_files_in_dir(&dir)
+                            .first()
+                            .map(String::from);
                         eprintln!("Warning: no `next` key specified for show `{}`", key);
                         println!(
                             "Falling back to the first file in the directory: `{:?}`.",

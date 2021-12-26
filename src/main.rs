@@ -1,5 +1,6 @@
 mod show;
 mod state;
+mod util;
 mod window;
 
 fn create_display(
