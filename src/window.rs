@@ -37,7 +37,7 @@ pub fn show(state: &mut State, ui: &mut egui::Ui) {
             }
             println!("Opened: {:?}", current_episode.display());
             println!("Returning control back to pls");
-            //show.next();
+            show.advance_to_next_episode();
         }
     };
 
@@ -51,7 +51,7 @@ pub fn show(state: &mut State, ui: &mut egui::Ui) {
 
     let mut window_is_open = state.error.is_some();
     if let Some(message) = state.error.as_ref() {
-        let result = egui::Window::new("Error")
+        egui::Window::new("Error")
             .open(&mut window_is_open)
             .collapsible(false)
             .show(ui.ctx(), |ui| {

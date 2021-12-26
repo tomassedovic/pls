@@ -655,6 +655,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "humanesort"
+version = "0.1.0-alpha"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "86e1ff2de8a0bad2abf709efb438f528711fd94ad28f8d0e21eb252e698afbb1"
+dependencies = [
+ "unicode-segmentation",
+]
+
+[[package]]
 name = "ident_case"
 version = "1.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1064,6 +1073,7 @@ dependencies = [
  "glow",
  "glutin",
  "hostname",
+ "humanesort",
  "opener",
  "toml_edit",
 ]
@@ -1299,6 +1309,12 @@ name = "ttf-parser"
 version = "0.13.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "76dacc724328b3d5e2ed67f9e30cdb56893a34ab239032502cc8f19f8dae4bbc"
+
+[[package]]
+name = "unicode-segmentation"
+version = "1.8.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8895849a949e7845e06bd6dc1aa51731a103c42707010a5b591c0038fb73385b"
 
 [[package]]
 name = "unicode-xid"
