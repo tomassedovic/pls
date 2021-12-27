@@ -56,6 +56,9 @@ pub fn show(state: &mut State, ui: &mut egui::Ui) {
 
     if ui.button("Settings").clicked() {
         println!("Clicked: Settings");
+        if let Err(error) = opener::open(&state.config_path) {
+            state.error = Some(format!("Error opening the config file:\n{:?}", error));
+        }
     };
 
     let mut window_is_open = state.error.is_some();
