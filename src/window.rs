@@ -1,7 +1,8 @@
 use crate::state::State;
 
 pub fn show(state: &mut State, ui: &mut egui::Ui) {
-    ui.heading("Hello World!");
+    ui.heading("Select a show");
+    ui.add_space(5.0);
 
     egui::ScrollArea::vertical()
         .max_height(200.0)
