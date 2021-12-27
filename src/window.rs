@@ -37,6 +37,16 @@ pub fn show(state: &mut State, ui: &mut egui::Ui) {
             println!("Opened: {:?}", current_episode.display());
             println!("Returning control back to pls");
             show.advance_to_next_episode();
+            if let Some(table) = state
+                .config
+                .get_mut(&state.selected_key)
+                .map(toml_edit::Item::as_table_mut)
+                .flatten()
+            {
+                table.insert("next", toml_edit::value(show.next.display().to_string()));
+            }
+            println!("{}", state.config.to_string());
+            state.save_config();
         }
     };
 

@@ -49,7 +49,8 @@ fn main() -> anyhow::Result<()> {
     println!("Config location: {:?}", config_dir);
     println!("Hostname: {:?}", hostname::get());
 
-    let mut state = state::State::new()?;
+    let config_path = std::path::PathBuf::from("test/pls.toml");
+    let mut state = state::State::new(&config_path)?;
 
     let event_loop = glutin::event_loop::EventLoop::with_user_event();
     let (gl_window, gl) = create_display(&event_loop);

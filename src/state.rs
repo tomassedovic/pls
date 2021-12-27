@@ -1,6 +1,9 @@
 use crate::show::Show;
 
-use std::{collections::HashMap, path::PathBuf};
+use std::{
+    collections::HashMap,
+    path::{Path, PathBuf},
+};
 
 use toml_edit::Document;
 
@@ -9,14 +12,14 @@ pub struct State {
     pub selected_key: String,
     pub ordered_keys: Vec<String>,
     pub config: Document,
+    pub config_path: PathBuf,
     pub shows: HashMap<String, Show>,
     pub error: Option<String>,
 }
 
 impl State {
-    pub fn new() -> Result<Self, anyhow::Error> {
-        // TODO: get the config location passed from main
-        let toml = std::fs::read_to_string("test/pls.toml")?;
+    pub fn new(config_path: &Path) -> Result<Self, anyhow::Error> {
+        let toml = std::fs::read_to_string(config_path)?;
         let doc = toml.parse::<Document>()?;
         let first_key = doc
             .iter()
@@ -100,9 +103,14 @@ impl State {
         Ok(State {
             selected_key: first_key.to_string(),
             ordered_keys,
+            config_path: config_path.into(),
             config: doc,
             shows,
             error: None,
         })
+    }
+
+    pub fn save_config(&self) {
+        let _ = std::fs::write(&self.config_path, self.config.to_string());
     }
 }
