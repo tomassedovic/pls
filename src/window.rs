@@ -1,5 +1,7 @@
 use crate::state::State;
 
+use egui::Widget;
+
 pub fn show(state: &mut State, ui: &mut egui::Ui) {
     ui.heading("Select a show");
     ui.add_space(5.0);
@@ -18,7 +20,26 @@ pub fn show(state: &mut State, ui: &mut egui::Ui) {
             });
         });
 
-    if ui.button("Play Next").clicked() {
+    ui.add_space(5.0);
+    ui.separator();
+    ui.add_space(5.0);
+
+    let mut play_next_text = String::from("Play Next");
+    if let Some(show) = state.shows.get_mut(&state.selected_key) {
+        if let Some(filename) = show
+            .current_episode()
+            .file_name()
+            .map(std::ffi::OsStr::to_str)
+            .flatten()
+        {
+            play_next_text.push_str(":\n");
+            play_next_text.push_str(filename);
+        }
+    }
+    let play_next_button = egui::Button::new(play_next_text)
+        .text_style(egui::TextStyle::Heading)
+        .ui(ui);
+    if play_next_button.clicked() {
         println!("Clicked: Playing next");
         if let Some(show) = state.shows.get_mut(&state.selected_key) {
             println!("Selected: {:?}", show);
