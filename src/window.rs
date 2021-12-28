@@ -3,6 +3,7 @@ use crate::state::State;
 use egui::{Align, Layout, Widget};
 
 pub fn show(state: &mut State, ui: &mut egui::Ui) {
+    ui.style_mut().spacing.button_padding = [10.0, 10.0].into();
     ui.heading("Select a show");
     ui.add_space(5.0);
 
@@ -11,7 +12,7 @@ pub fn show(state: &mut State, ui: &mut egui::Ui) {
         |ui| {
             ui.add_space(5.0);
             ui.allocate_ui_with_layout(
-                egui::Vec2::new(200.0, 10.0),
+                egui::Vec2::new(200.0, 30.0),
                 Layout::left_to_right(),
                 |ui| {
                     ui.columns(2, |c| {
