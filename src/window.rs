@@ -32,18 +32,16 @@ pub fn show(state: &mut State, ui: &mut egui::Ui) {
 
             ui.separator();
 
-            let mut play_next_text = String::from("Play Next");
-            if let Some(show) = state.shows.get_mut(&state.selected_key) {
-                if let Some(filename) = show
-                    .current_episode()
-                    .file_name()
-                    .map(std::ffi::OsStr::to_str)
-                    .flatten()
-                {
-                    play_next_text.push_str(":\n");
-                    play_next_text.push_str(filename);
-                }
-            }
+            let play_next_text = state
+                .shows
+                .get(&state.selected_key)
+                .map(|show| {
+                    show.current_episode()
+                        .file_name()
+                        .map(|f| f.to_string_lossy().into_owned())
+                })
+                .flatten()
+                .unwrap_or_else(|| "No episode available".into());
 
             let play_next_button = egui::Button::new(play_next_text)
                 .text_style(egui::TextStyle::Heading)
@@ -82,10 +80,12 @@ pub fn show(state: &mut State, ui: &mut egui::Ui) {
                     state.save_config();
                 }
             };
+            ui.heading("Play next episode:");
 
             if ui.button("Replay last watched").clicked() {
                 println!("Clicked: Replay last watched");
             }
+            ui.label("Replay last watched:");
 
             ui.separator();
 
