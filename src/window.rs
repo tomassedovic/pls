@@ -15,18 +15,22 @@ pub fn show(state: &mut State, ui: &mut egui::Ui) {
                 egui::Vec2::new(200.0, 30.0),
                 Layout::left_to_right(),
                 |ui| {
-                    ui.columns(2, |c| {
+                    ui.columns(3, |c| {
                         if c[0].button("About").clicked() {
                             println!("Clicked: About");
                         };
 
-                        if c[1].button("Settings").clicked() {
-                            println!("Clicked: Settings");
+                        if c[1].button("Config").clicked() {
+                            println!("Clicked: Config");
                             if let Err(error) = opener::open(&state.config_path) {
                                 state.error =
                                     Some(format!("Error opening the config file:\n{:?}", error));
                             }
                         };
+
+                        if c[2].button("Reload").clicked() {
+                            println!("Clicked: Reload config");
+                        }
                     });
                 },
             );
