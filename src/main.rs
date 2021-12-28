@@ -12,7 +12,7 @@ fn create_display(
     let window_builder = glutin::window::WindowBuilder::new()
         .with_resizable(true)
         .with_inner_size(glutin::dpi::LogicalSize {
-            width: 800.0,
+            width: 400.0,
             height: 600.0,
         })
         .with_title("pls");
