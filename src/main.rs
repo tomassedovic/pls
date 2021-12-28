@@ -68,6 +68,8 @@ fn main() -> anyhow::Result<()> {
         let mut redraw = || {
             egui.begin_frame(gl_window.window());
 
+            // NOTE: the light theme is too washed out. But maybe we can take it and update some of the colours?
+            //egui.ctx().set_visuals(egui::Visuals::light());
             egui::CentralPanel::default().show(egui.ctx(), |ui| {
                 window::show(&mut state, ui);
             });
