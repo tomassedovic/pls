@@ -44,12 +44,19 @@ fn main() -> anyhow::Result<()> {
     let organisation = ""; // NOTE: Try Jumping
     let application = "pls";
 
-    let config_dir = directories::ProjectDirs::from(qualifier, organisation, application)
-        .map(|d| d.config_dir().to_owned());
-    println!("Config location: {:?}", config_dir);
     println!("Hostname: {:?}", hostname::get());
 
-    let config_path = std::path::PathBuf::from("test/pls.toml");
+    let test_config_dir = std::path::PathBuf::from("test");
+    let config_dir = if cfg!(feature = "test") {
+        test_config_dir
+    } else {
+        directories::ProjectDirs::from(qualifier, organisation, application)
+            .map(|d| d.config_dir().to_owned())
+            .unwrap_or(test_config_dir)
+    };
+    let config_path = config_dir.join("pls.toml");
+
+    println!("Config location: {:?}", config_path);
     let mut state = state::State::new(&config_path)?;
 
     let event_loop = glutin::event_loop::EventLoop::with_user_event();
