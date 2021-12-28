@@ -90,6 +90,14 @@ pub fn show(state: &mut State, ui: &mut egui::Ui) {
 
             ui.separator();
 
+            ui.add_space(5.0);
+
+            if let Some(show) = state.shows.get_mut(&state.selected_key) {
+                ui.label(format!("Location: {}", show.dir.display()));
+            }
+
+            ui.add_space(10.0);
+
             egui::ScrollArea::vertical()
                 .always_show_scroll(true)
                 .show(ui, |ui| {
