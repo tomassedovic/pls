@@ -1,89 +1,111 @@
 use crate::state::State;
 
-use egui::Widget;
+use egui::{Align, Layout, Widget};
 
 pub fn show(state: &mut State, ui: &mut egui::Ui) {
     ui.heading("Select a show");
     ui.add_space(5.0);
 
-    egui::ScrollArea::vertical()
-        .max_height(200.0)
-        .auto_shrink([false, false])
-        .always_show_scroll(true)
-        .show(ui, |ui| {
-            ui.with_layout(egui::Layout::top_down_justified(egui::Align::Min), |ui| {
-                for key in &state.ordered_keys {
-                    if let Some(show) = &state.shows.get(key) {
-                        ui.selectable_value(&mut state.selected_key, key.to_string(), &show.name);
-                    }
+    ui.with_layout(
+        Layout::bottom_up(Align::Min).with_cross_justify(true),
+        |ui| {
+            ui.add_space(5.0);
+            ui.allocate_ui_with_layout(
+                egui::Vec2::new(200.0, 10.0),
+                Layout::left_to_right(),
+                |ui| {
+                    ui.columns(2, |c| {
+                        if c[0].button("About").clicked() {
+                            println!("Clicked: About");
+                        };
+
+                        if c[1].button("Settings").clicked() {
+                            println!("Clicked: Settings");
+                            if let Err(error) = opener::open(&state.config_path) {
+                                state.error =
+                                    Some(format!("Error opening the config file:\n{:?}", error));
+                            }
+                        };
+                    });
+                },
+            );
+
+            ui.separator();
+
+            let mut play_next_text = String::from("Play Next");
+            if let Some(show) = state.shows.get_mut(&state.selected_key) {
+                if let Some(filename) = show
+                    .current_episode()
+                    .file_name()
+                    .map(std::ffi::OsStr::to_str)
+                    .flatten()
+                {
+                    play_next_text.push_str(":\n");
+                    play_next_text.push_str(filename);
                 }
-            });
-        });
-
-    ui.add_space(5.0);
-    ui.separator();
-    ui.add_space(5.0);
-
-    let mut play_next_text = String::from("Play Next");
-    if let Some(show) = state.shows.get_mut(&state.selected_key) {
-        if let Some(filename) = show
-            .current_episode()
-            .file_name()
-            .map(std::ffi::OsStr::to_str)
-            .flatten()
-        {
-            play_next_text.push_str(":\n");
-            play_next_text.push_str(filename);
-        }
-    }
-    let play_next_button = egui::Button::new(play_next_text)
-        .text_style(egui::TextStyle::Heading)
-        .ui(ui);
-    if play_next_button.clicked() {
-        println!("Clicked: Playing next");
-        if let Some(show) = state.shows.get_mut(&state.selected_key) {
-            println!("Selected: {:?}", show);
-            println!("{}", show.current_episode().display());
-            let current_episode = show.current_episode();
-            if !current_episode.exists() {
-                state.error = Some(format!(
-                    "Episode file doesn't exist: {}",
-                    current_episode.display()
-                ));
-            } else if !current_episode.is_file() {
-                state.error = Some(format!(
-                    "Episode path is not a file: {}",
-                    current_episode.display()
-                ));
-            } else if let Err(error) = opener::open(&current_episode) {
-                state.error = Some(format!("Error opening file:\n{:?}", error));
             }
-            println!("Opened: {:?}", current_episode.display());
-            println!("Returning control back to pls");
-            show.advance_to_next_episode();
-            if let Some(table) = state
-                .config
-                .get_mut(&state.selected_key)
-                .map(toml_edit::Item::as_table_mut)
-                .flatten()
-            {
-                table.insert("next", toml_edit::value(show.next.display().to_string()));
+
+            let play_next_button = egui::Button::new(play_next_text)
+                .text_style(egui::TextStyle::Heading)
+                .ui(ui);
+            if play_next_button.clicked() {
+                println!("Clicked: Playing next");
+                if let Some(show) = state.shows.get_mut(&state.selected_key) {
+                    println!("Selected: {:?}", show);
+                    println!("{}", show.current_episode().display());
+                    let current_episode = show.current_episode();
+                    if !current_episode.exists() {
+                        state.error = Some(format!(
+                            "Episode file doesn't exist: {}",
+                            current_episode.display()
+                        ));
+                    } else if !current_episode.is_file() {
+                        state.error = Some(format!(
+                            "Episode path is not a file: {}",
+                            current_episode.display()
+                        ));
+                    } else if let Err(error) = opener::open(&current_episode) {
+                        state.error = Some(format!("Error opening file:\n{:?}", error));
+                    }
+                    println!("Opened: {:?}", current_episode.display());
+                    println!("Returning control back to pls");
+                    show.advance_to_next_episode();
+                    if let Some(table) = state
+                        .config
+                        .get_mut(&state.selected_key)
+                        .map(toml_edit::Item::as_table_mut)
+                        .flatten()
+                    {
+                        table.insert("next", toml_edit::value(show.next.display().to_string()));
+                    }
+                    println!("{}", state.config.to_string());
+                    state.save_config();
+                }
+            };
+
+            if ui.button("Replay last watched").clicked() {
+                println!("Clicked: Replay last watched");
             }
-            println!("{}", state.config.to_string());
-            state.save_config();
-        }
-    };
 
-    if ui.button("About").clicked() {
-        println!("Clicked: About");
-    };
+            ui.separator();
 
-    if ui.button("Settings").clicked() {
-        println!("Clicked: Settings");
-        if let Err(error) = opener::open(&state.config_path) {
-            state.error = Some(format!("Error opening the config file:\n{:?}", error));
-        }
-    };
+            egui::ScrollArea::vertical()
+                .always_show_scroll(true)
+                .show(ui, |ui| {
+                    ui.with_layout(Layout::top_down_justified(Align::Min), |ui| {
+                        for key in &state.ordered_keys {
+                            if let Some(show) = &state.shows.get(key) {
+                                ui.selectable_value(
+                                    &mut state.selected_key,
+                                    key.to_string(),
+                                    &show.name,
+                                );
+                            }
+                        }
+                    });
+                });
+        },
+    );
 
     let mut window_is_open = state.error.is_some();
     if let Some(message) = state.error.as_ref() {
