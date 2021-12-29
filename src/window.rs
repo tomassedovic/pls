@@ -4,7 +4,7 @@ use egui::{Align, Button, Color32, Layout, Rect, ScrollArea, TextStyle, Ui, Vec2
 
 pub fn show(state: &mut State, ui: &mut Ui) {
     ui.style_mut().spacing.button_padding = [10.0, 10.0].into();
-    ui.heading("Select a show");
+    ui.heading("Select a show:");
     ui.add_space(5.0);
 
     ui.with_layout(
