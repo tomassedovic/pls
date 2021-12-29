@@ -1,6 +1,8 @@
 use crate::state::State;
 
-use egui::{Align, Button, Color32, Layout, Rect, ScrollArea, TextStyle, Ui, Vec2, Widget, Window};
+use eframe::egui::{
+    Align, Button, Color32, Layout, Rect, ScrollArea, Stroke, TextStyle, Ui, Vec2, Widget, Window,
+};
 
 pub fn show(state: &mut State, ui: &mut Ui) {
     ui.style_mut().spacing.button_padding = [10.0, 10.0].into();
@@ -87,6 +89,8 @@ pub fn show(state: &mut State, ui: &mut Ui) {
                     state.save_config();
                 }
             };
+            ui.label("Play next episode:");
+            //ui.heading("Play next episode:");
 
             ui.separator();
 
@@ -105,8 +109,8 @@ pub fn show(state: &mut State, ui: &mut Ui) {
                         ui.painter_at(Rect::EVERYTHING).rect(
                             Rect::EVERYTHING,
                             0.0,
-                            egui::Color32::WHITE,
-                            egui::Stroke::default(),
+                            Color32::WHITE,
+                            Stroke::default(),
                         );
                         for key in &state.ordered_keys {
                             if let Some(show) = &state.shows.get(key) {
