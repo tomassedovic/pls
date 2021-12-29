@@ -1,6 +1,6 @@
 use crate::state::State;
 
-use egui::{Align, Button, Layout, Rect, ScrollArea, TextStyle, Ui, Vec2, Widget, Window};
+use egui::{Align, Button, Color32, Layout, Rect, ScrollArea, TextStyle, Ui, Vec2, Widget, Window};
 
 pub fn show(state: &mut State, ui: &mut Ui) {
     ui.style_mut().spacing.button_padding = [10.0, 10.0].into();
@@ -45,6 +45,7 @@ pub fn show(state: &mut State, ui: &mut Ui) {
                 .unwrap_or_else(|| "No episode available".into());
 
             let play_next_button = Button::new(play_next_text)
+                .text_color(Color32::BLUE)
                 .text_style(TextStyle::Heading)
                 .ui(ui);
             if play_next_button.clicked() {
