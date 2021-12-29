@@ -1,8 +1,8 @@
 use crate::state::State;
 
-use egui::{Align, Layout, Widget};
+use egui::{Align, Button, Layout, ScrollArea, TextStyle, Ui, Vec2, Widget, Window};
 
-pub fn show(state: &mut State, ui: &mut egui::Ui) {
+pub fn show(state: &mut State, ui: &mut Ui) {
     ui.style_mut().spacing.button_padding = [10.0, 10.0].into();
     ui.heading("Select a show");
     ui.add_space(5.0);
@@ -11,29 +11,25 @@ pub fn show(state: &mut State, ui: &mut egui::Ui) {
         Layout::bottom_up(Align::Min).with_cross_justify(true),
         |ui| {
             ui.add_space(5.0);
-            ui.allocate_ui_with_layout(
-                egui::Vec2::new(200.0, 30.0),
-                Layout::left_to_right(),
-                |ui| {
-                    ui.columns(3, |c| {
-                        if c[0].button("About").clicked() {
-                            println!("Clicked: About");
-                        };
+            ui.allocate_ui_with_layout(Vec2::new(200.0, 30.0), Layout::left_to_right(), |ui| {
+                ui.columns(3, |c| {
+                    if c[0].button("About").clicked() {
+                        println!("Clicked: About");
+                    };
 
-                        if c[1].button("Config").clicked() {
-                            println!("Clicked: Config");
-                            if let Err(error) = opener::open(&state.config_path) {
-                                state.error =
-                                    Some(format!("Error opening the config file:\n{:?}", error));
-                            }
-                        };
-
-                        if c[2].button("Reload").clicked() {
-                            println!("Clicked: Reload config");
+                    if c[1].button("Config").clicked() {
+                        println!("Clicked: Config");
+                        if let Err(error) = opener::open(&state.config_path) {
+                            state.error =
+                                Some(format!("Error opening the config file:\n{:?}", error));
                         }
-                    });
-                },
-            );
+                    };
+
+                    if c[2].button("Reload").clicked() {
+                        println!("Clicked: Reload config");
+                    }
+                });
+            });
 
             ui.separator();
 
@@ -48,8 +44,8 @@ pub fn show(state: &mut State, ui: &mut egui::Ui) {
                 .flatten()
                 .unwrap_or_else(|| "No episode available".into());
 
-            let play_next_button = egui::Button::new(play_next_text)
-                .text_style(egui::TextStyle::Heading)
+            let play_next_button = Button::new(play_next_text)
+                .text_style(TextStyle::Heading)
                 .ui(ui);
             if play_next_button.clicked() {
                 println!("Clicked: Playing next");
@@ -102,7 +98,7 @@ pub fn show(state: &mut State, ui: &mut egui::Ui) {
 
             ui.add_space(10.0);
 
-            egui::ScrollArea::vertical()
+            ScrollArea::vertical()
                 .always_show_scroll(true)
                 .show(ui, |ui| {
                     ui.with_layout(Layout::top_down_justified(Align::Min), |ui| {
@@ -122,7 +118,7 @@ pub fn show(state: &mut State, ui: &mut egui::Ui) {
 
     let mut window_is_open = state.error.is_some();
     if let Some(message) = state.error.as_ref() {
-        egui::Window::new("Error")
+        Window::new("Error")
             .open(&mut window_is_open)
             .collapsible(false)
             .show(ui.ctx(), |ui| {
