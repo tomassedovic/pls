@@ -1,6 +1,6 @@
 use crate::state::State;
 
-use egui::{Align, Button, Layout, ScrollArea, TextStyle, Ui, Vec2, Widget, Window};
+use egui::{Align, Button, Layout, Rect, ScrollArea, TextStyle, Ui, Vec2, Widget, Window};
 
 pub fn show(state: &mut State, ui: &mut Ui) {
     ui.style_mut().spacing.button_padding = [10.0, 10.0].into();
@@ -102,6 +102,12 @@ pub fn show(state: &mut State, ui: &mut Ui) {
                 .always_show_scroll(true)
                 .show(ui, |ui| {
                     ui.with_layout(Layout::top_down_justified(Align::Min), |ui| {
+                        ui.painter_at(Rect::EVERYTHING).rect(
+                            Rect::EVERYTHING,
+                            0.0,
+                            egui::Color32::WHITE,
+                            egui::Stroke::default(),
+                        );
                         for key in &state.ordered_keys {
                             if let Some(show) = &state.shows.get(key) {
                                 ui.selectable_value(
