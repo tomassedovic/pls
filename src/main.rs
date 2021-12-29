@@ -63,6 +63,16 @@ fn main() -> anyhow::Result<()> {
     let (gl_window, gl) = create_display(&event_loop);
 
     let mut egui = egui_glow::EguiGlow::new(&gl_window, &gl);
+    let mut fonts = egui::FontDefinitions::default();
+    fonts.family_and_size.insert(
+        egui::TextStyle::Button,
+        (egui::FontFamily::Proportional, 18.0),
+    );
+    fonts.family_and_size.insert(
+        egui::TextStyle::Heading,
+        (egui::FontFamily::Proportional, 28.0),
+    );
+    egui.ctx().set_fonts(fonts);
 
     event_loop.run(move |event, _, control_flow| {
         let mut redraw = || {
