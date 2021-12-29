@@ -1,7 +1,8 @@
 use crate::state::State;
 
 use eframe::egui::{
-    Align, Button, Color32, Layout, Rect, ScrollArea, Stroke, TextStyle, Ui, Vec2, Widget, Window,
+    Align, Button, Color32, Layout, Rect, RichText, ScrollArea, Stroke, TextStyle, Ui, Vec2,
+    Widget, Window,
 };
 
 pub fn show(state: &mut State, ui: &mut Ui) {
@@ -51,10 +52,10 @@ pub fn show(state: &mut State, ui: &mut Ui) {
                 .flatten()
                 .unwrap_or_else(|| "No episode available".into());
 
-            let play_next_button = Button::new(play_next_text)
-                .text_color(Color32::BLUE)
-                .text_style(TextStyle::Heading)
-                .ui(ui);
+            let play_next_label = RichText::new(play_next_text)
+                .color(Color32::BLUE)
+                .text_style(TextStyle::Heading);
+            let play_next_button = Button::new(play_next_label).ui(ui);
             if play_next_button.clicked() {
                 println!("Clicked: Playing next");
                 if let Some(show) = state.shows.get_mut(&state.selected_key) {
@@ -90,7 +91,6 @@ pub fn show(state: &mut State, ui: &mut Ui) {
                 }
             };
             ui.label("Play next episode:");
-            //ui.heading("Play next episode:");
 
             ui.separator();
 
