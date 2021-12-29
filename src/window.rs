@@ -33,6 +33,11 @@ pub fn show(state: &mut State, ui: &mut Ui) {
 
             ui.separator();
 
+            if ui.button("Replay last watched").clicked() {
+                println!("Clicked: Replay last watched");
+            }
+            ui.label("Replay last watched:");
+
             let play_next_text = state
                 .shows
                 .get(&state.selected_key)
@@ -82,12 +87,6 @@ pub fn show(state: &mut State, ui: &mut Ui) {
                     state.save_config();
                 }
             };
-            ui.heading("Play next episode:");
-
-            if ui.button("Replay last watched").clicked() {
-                println!("Clicked: Replay last watched");
-            }
-            ui.label("Replay last watched:");
 
             ui.separator();
 
