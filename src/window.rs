@@ -39,12 +39,8 @@ pub fn show(state: &mut State, ui: &mut Ui) {
             let replay_last_text = state
                 .shows
                 .get(&state.selected_key)
-                .map(|show| {
-                    show.previous_episode()
-                        .map(|e| e.file_name().map(|f| f.to_string_lossy().into_owned()))
-                })
-                .flatten()
-                .flatten()
+                .and_then(|show| show.previous_episode())
+                .and_then(|e| e.file_name().map(|f| f.to_string_lossy().into_owned()))
                 .unwrap_or_else(|| "No episode available".into());
 
             if ui.button(replay_last_text).clicked() {
@@ -52,8 +48,7 @@ pub fn show(state: &mut State, ui: &mut Ui) {
                 if let Some(episode) = state
                     .shows
                     .get_mut(&state.selected_key)
-                    .map(|show| show.previous_episode())
-                    .flatten()
+                    .and_then(|show| show.previous_episode())
                 {
                     println!("{}", episode.display());
                     if !episode.exists() {
@@ -74,12 +69,8 @@ pub fn show(state: &mut State, ui: &mut Ui) {
             let play_next_text = state
                 .shows
                 .get(&state.selected_key)
-                .map(|show| {
-                    show.current_episode()
-                        .file_name()
-                        .map(|f| f.to_string_lossy().into_owned())
-                })
-                .flatten()
+                .map(|show| show.current_episode())
+                .and_then(|e| e.file_name().map(|f| f.to_string_lossy().into_owned()))
                 .unwrap_or_else(|| "No episode available".into());
 
             let play_next_label = RichText::new(play_next_text)
@@ -111,8 +102,7 @@ pub fn show(state: &mut State, ui: &mut Ui) {
                     if let Some(table) = state
                         .config
                         .get_mut(&state.selected_key)
-                        .map(toml_edit::Item::as_table_mut)
-                        .flatten()
+                        .and_then(toml_edit::Item::as_table_mut)
                     {
                         table.insert("next", toml_edit::value(show.next.display().to_string()));
                     }

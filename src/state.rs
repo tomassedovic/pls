@@ -31,19 +31,15 @@ impl State {
         let mut shows = HashMap::new();
         for (key, show) in doc.iter() {
             ordered_keys.push(key.to_string());
-            let name = show.get("name").map(|v| v.as_str()).flatten();
-            let dir_default = show.get("directory").map(|v| v.as_str()).flatten();
+            let name = show.get("name").and_then(|v| v.as_str());
+            let dir_default = show.get("directory").and_then(|v| v.as_str());
             let hostname = hostname::get()
                 .ok()
-                .map(|cstr| cstr.into_string().ok())
-                .flatten();
+                .and_then(|cstr| cstr.into_string().ok());
             let dir_hostname = hostname
                 .clone()
-                .map(|hostname| {
-                    show.get(format!("directory_{}", hostname))
-                        .map(|v| v.as_str())
-                })
-                .flatten()
+                .and_then(|hostname| show.get(format!("directory_{}", hostname)))
+                .map(|v| v.as_str())
                 .unwrap_or(dir_default);
 
             let name = name.unwrap_or_else(|| {
@@ -53,7 +49,7 @@ impl State {
                 );
                 key
             });
-            let next = show.get("next").map(|v| v.as_str()).flatten();
+            let next = show.get("next").and_then(|v| v.as_str());
 
             if let Some(dir) = dir_hostname {
                 let dir = PathBuf::from(dir);
