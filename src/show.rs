@@ -27,6 +27,19 @@ impl Show {
         }
     }
 
+    pub fn previous_episode(&self) -> Option<PathBuf> {
+        let eps = self.episodes();
+        let current_episode = self.current_episode();
+        let current_episode_index = eps.iter().position(|episode| episode == &current_episode);
+        if let Some(index) = current_episode_index {
+            if index > 0 {
+                let previous_episode = &eps[index - 1];
+                return Some(self.dir.join(previous_episode));
+            }
+        }
+        None
+    }
+
     pub fn episodes(&self) -> Vec<PathBuf> {
         crate::util::all_paths_in_dir(&self.dir)
     }

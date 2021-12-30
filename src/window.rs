@@ -36,8 +36,38 @@ pub fn show(state: &mut State, ui: &mut Ui) {
 
             ui.separator();
 
-            if ui.button("Replay last watched").clicked() {
+            let replay_last_text = state
+                .shows
+                .get(&state.selected_key)
+                .map(|show| {
+                    show.previous_episode()
+                        .map(|e| e.file_name().map(|f| f.to_string_lossy().into_owned()))
+                })
+                .flatten()
+                .flatten()
+                .unwrap_or_else(|| "No episode available".into());
+
+            if ui.button(replay_last_text).clicked() {
                 println!("Clicked: Replay last watched");
+                if let Some(episode) = state
+                    .shows
+                    .get_mut(&state.selected_key)
+                    .map(|show| show.previous_episode())
+                    .flatten()
+                {
+                    println!("{}", episode.display());
+                    if !episode.exists() {
+                        state.error =
+                            Some(format!("Episode file doesn't exist: {}", episode.display()));
+                    } else if !episode.is_file() {
+                        state.error =
+                            Some(format!("Episode path is not a file: {}", episode.display()));
+                    } else if let Err(error) = opener::open(&episode) {
+                        state.error = Some(format!("Error opening file:\n{:?}", error));
+                    }
+                    println!("Opened: {:?}", episode.display());
+                    println!("Returning control back to pls");
+                }
             }
             ui.label("Replay last watched:");
 
@@ -60,8 +90,8 @@ pub fn show(state: &mut State, ui: &mut Ui) {
                 println!("Clicked: Playing next");
                 if let Some(show) = state.shows.get_mut(&state.selected_key) {
                     println!("Selected: {:?}", show);
-                    println!("{}", show.current_episode().display());
                     let current_episode = show.current_episode();
+                    println!("{}", current_episode.display());
                     if !current_episode.exists() {
                         state.error = Some(format!(
                             "Episode file doesn't exist: {}",
