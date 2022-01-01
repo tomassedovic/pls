@@ -76,7 +76,7 @@ fn main() -> anyhow::Result<()> {
 
     let app = Pls { state };
     let native_options = eframe::NativeOptions {
-        initial_window_size: Some(egui::Vec2::new(400.0, 600.0)),
+        initial_window_size: Some(egui::Vec2::new(600.0, 800.0)),
         ..eframe::NativeOptions::default()
     };
     eframe::run_native(Box::new(app), native_options)
