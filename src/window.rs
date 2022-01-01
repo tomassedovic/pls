@@ -17,7 +17,7 @@ pub fn show(state: &mut State, ui: &mut Ui) {
             ui.allocate_ui_with_layout(Vec2::new(200.0, 30.0), Layout::left_to_right(), |ui| {
                 ui.columns(3, |c| {
                     if c[0].button("About").clicked() {
-                        println!("Clicked: About");
+                        state.about_window_is_open = true;
                     };
 
                     if c[1].button("Config").clicked() {
@@ -154,11 +154,43 @@ pub fn show(state: &mut State, ui: &mut Ui) {
             .open(&mut error_window_is_open)
             .collapsible(false)
             .show(ui.ctx(), |ui| {
-                ui.heading("Error occured");
                 ui.label(message);
             });
         if !error_window_is_open {
             state.error = None;
         }
     }
+
+    Window::new("About pls")
+        .open(&mut state.about_window_is_open)
+        .collapsible(false)
+        .show(ui.ctx(), |ui| {
+            ScrollArea::vertical()
+                .always_show_scroll(true)
+                .show(ui, |ui| {
+                    ui.label(ABOUT_TEXT);
+                });
+        });
 }
+
+const ABOUT_TEXT: &str = "pls is a program that lets you load up series of files (typically video files) and play those files one after another. For example, if you've got the episodes of a TV show in a directory, it will play them one by one without you having to remember where left off.
+
+Copyright (C) 2019-2022 Tomas Sedovic <tomas@sedovic.cz>
+
+Program license:
+
+This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with this program. If not, see:
+
+https://www.gnu.org/licenses/
+
+Icons:
+The \"TV Show\" application icon comes from Icons8:
+
+https://icons8.com/icon/46904/cute-color
+
+It is provided free of charge under the condition of showing the link above in the About dialog of the app that uses it.
+";

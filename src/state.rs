@@ -15,6 +15,7 @@ pub struct State {
     pub config_path: PathBuf,
     pub shows: HashMap<String, Show>,
     pub error: Option<String>,
+    pub about_window_is_open: bool,
 }
 
 impl State {
@@ -103,6 +104,7 @@ impl State {
             config: doc,
             shows,
             error: None,
+            about_window_is_open: false,
         })
     }
 
