@@ -24,13 +24,15 @@ impl State {
         let doc = toml.parse::<Document>()?;
         let first_key = doc
             .iter()
-            .next()
+            .filter(|(_key, value)| value.is_table())
             .map(|(key, _series)| key)
+            .next()
             .unwrap_or_default();
-
+        println!("First key: {:?}", first_key);
         let mut ordered_keys = vec![];
         let mut shows = HashMap::new();
-        for (key, show) in doc.iter() {
+        let shows_iterator = doc.iter().filter(|(_key, value)| value.is_table());
+        for (key, show) in shows_iterator {
             ordered_keys.push(key.to_string());
             let name = show.get("name").and_then(|v| v.as_str());
             let dir_default = show.get("directory").and_then(|v| v.as_str());
