@@ -1,10 +1,10 @@
 [flat]
-name = Show With A Flat Directory Structure
-directory = ./test/flat-show
-next = S1E1.txt
+name = "Show With A Flat Directory Structure"
+directory = "./test/flat-show"
+next = "S1E1.txt"
 
 [nested]
-name = Show With A Nested Directory Structure
-directory = ./test/nested-show
-next = S1/S1E1.txt
+name = "Show With A Nested Directory Structure"
+directory = "./test/nested-show"
+next = "S1/S1E1.txt"
 
