@@ -61,7 +61,7 @@ fn main() -> anyhow::Result<()> {
 
     println!("Hostname: {:?}", hostname::get());
 
-    let test_config_dir = std::path::PathBuf::from("test");
+    let test_config_dir = std::path::PathBuf::from("test/pls").canonicalize()?;
     let config_dir = if cfg!(feature = "test") {
         test_config_dir
     } else {
