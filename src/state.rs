@@ -52,8 +52,7 @@ impl State {
             });
             let next = show.get("next").and_then(|v| v.as_str());
 
-            if let Some(dir) = dir_hostname {
-                let dir = PathBuf::from(dir);
+            if let Some(dir) = dir_hostname.and_then(|dir| PathBuf::from(dir).canonicalize().ok()) {
                 // Fallback to the first file if no `next` key specified:
                 let next = next.map_or_else(
                     || {
