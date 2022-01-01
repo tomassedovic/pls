@@ -106,6 +106,12 @@ impl State {
         })
     }
 
+    pub fn reload_config(&mut self) -> Result<(), anyhow::Error> {
+        let new_config = Self::new(&self.config_path)?;
+        *self = new_config;
+        Ok(())
+    }
+
     pub fn save_config(&self) {
         let _ = std::fs::write(&self.config_path, self.config.to_string());
     }
