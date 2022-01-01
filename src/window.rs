@@ -148,16 +148,16 @@ pub fn show(state: &mut State, ui: &mut Ui) {
         },
     );
 
-    let mut window_is_open = state.error.is_some();
+    let mut error_window_is_open = state.error.is_some();
     if let Some(message) = state.error.as_ref() {
         Window::new("Error")
-            .open(&mut window_is_open)
+            .open(&mut error_window_is_open)
             .collapsible(false)
             .show(ui.ctx(), |ui| {
                 ui.heading("Error occured");
                 ui.label(message);
             });
-        if !window_is_open {
+        if !error_window_is_open {
             state.error = None;
         }
     }
