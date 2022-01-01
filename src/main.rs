@@ -21,6 +21,15 @@ impl epi::App for Pls {
         _storage: Option<&dyn epi::Storage>,
     ) {
         let mut fonts = egui::FontDefinitions::default();
+        let font_name = "OpenSans";
+        fonts.font_data.insert(
+            font_name.to_owned(),
+            egui::FontData::from_static(include_bytes!("../fonts/OpenSans-Bold.ttf",)),
+        );
+        fonts
+            .fonts_for_family
+            .insert(egui::FontFamily::Proportional, vec![font_name.to_owned()]);
+
         fonts.family_and_size.insert(
             egui::TextStyle::Button,
             (egui::FontFamily::Proportional, 18.0),
