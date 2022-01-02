@@ -102,7 +102,9 @@ impl State {
                 }
             } else if key == "version" {
                 // TODO: Have `version` be a `Result`, record if it's an unexpected type, unknown value or unspecified
-                version = Version::from_str(&value.to_string());
+                if let Some(version_str) = value.as_str() {
+                    version = Version::from_str(version_str);
+                }
             }
         }
 
