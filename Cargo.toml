@@ -9,9 +9,9 @@ exclude = ["/test/**", "/venv/**", "/bin/**"]
 [dependencies]
 anyhow = "1.0"
 directories = "4.0"
-# TODO: switch to upstream once this PR is merged:
-# https://github.com/emilk/egui/pull/1031
-eframe = { git = "https://github.com/tomassedovic/emilk-egui.git", branch = "eframe-optional-deps", default-features = false, features = ["egui_glow"] }
+egui_glow = { version = "0.16", default-features = false, features = ["epi", "winit"] }
+egui = { version = "0.16" }
+epi = { version = "0.16" }
 toml_edit = "0.10"
 opener = "0.5"
 hostname = "0.3"

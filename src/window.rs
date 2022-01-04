@@ -1,6 +1,6 @@
 use crate::state::State;
 
-use eframe::egui::{
+use egui::{
     Align, Button, Color32, Layout, Rect, RichText, ScrollArea, Stroke, TextStyle, Ui, Vec2,
     Widget, Window,
 };

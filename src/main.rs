@@ -1,5 +1,3 @@
-use eframe::{egui, epi};
-
 mod show;
 mod state;
 mod util;
@@ -75,9 +73,9 @@ fn main() -> anyhow::Result<()> {
     let state = state::State::new(&config_path)?;
 
     let app = Pls { state };
-    let native_options = eframe::NativeOptions {
+    let native_options = egui_glow::NativeOptions {
         initial_window_size: Some(egui::Vec2::new(600.0, 800.0)),
-        ..eframe::NativeOptions::default()
+        ..egui_glow::NativeOptions::default()
     };
-    eframe::run_native(Box::new(app), native_options)
+    egui_glow::run(Box::new(app), &native_options)
 }
