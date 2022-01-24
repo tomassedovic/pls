@@ -108,7 +108,7 @@ pub fn show(state: &mut State, ui: &mut Ui) {
                     {
                         table.insert("next", toml_edit::value(show.next.display().to_string()));
                     }
-                    println!("{}", state.config.to_string());
+                    println!("{}", state.config);
                     state.save_config();
                 }
             };
