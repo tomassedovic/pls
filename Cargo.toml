@@ -2,6 +2,7 @@
 name = "pls"
 version = "0.1.0"
 authors = ["Tomas Sedovic <tomas@sedovic.cz>"]
+license = "AGPL-3.0-or-later"
 edition = "2021"
 exclude = ["/test/**", "/venv/**", "/bin/**"]
 
