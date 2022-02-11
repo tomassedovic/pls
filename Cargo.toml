@@ -4,8 +4,12 @@ version = "0.1.0"
 authors = ["Tomas Sedovic <tomas@sedovic.cz>"]
 license = "AGPL-3.0-or-later"
 edition = "2021"
+build = "build.rs"
 exclude = ["/test/**", "/venv/**", "/bin/**"]
 
+# Only compile winres on Windows targets.
+[target.'cfg(windows)'.build-dependencies]
+winres = "0.1"
 
 [dependencies]
 anyhow = "1.0"
