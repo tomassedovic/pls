@@ -1,9 +1,0 @@
-QLabel#location {
-  min-width: 20em;
-  max-width: 30em;
-}
-
-QPushButton#play_next {
-  color: blue;
-  padding: 1em 3em;
-}
