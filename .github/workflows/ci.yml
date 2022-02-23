@@ -1,0 +1,60 @@
+name: Build and Test pls
+
+on:
+  push:
+    branches: [ master ]
+    tags:
+      - 'v*.*.*'
+  pull_request:
+    branches: [ master ]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        platform:
+        - os: ubuntu-latest
+          target_triple: x86_64-unknown-linux-gnu
+          archive_ext: tar.gz
+          extra_features: linux-extra-features
+          build_time_dependencies: ""
+        - os: windows-latest
+          target_triple: x86_64-pc-windows-msvc
+          archive_ext: zip
+          extra_features: windows-extra-features
+          build_time_dependencies: ""
+        - os: macos-latest
+          target_triple: x86_64-apple-darwin
+          archive_ext: zip
+          extra_features: macos-extra-features
+          build_time_dependencies: ""
+    runs-on: ${{ matrix.platform.os }}
+
+    env:
+      TARGET_TRIPLE: ${{ matrix.platform.target_triple }}
+      ARCHIVE_EXT: ${{ matrix.platform.archive_ext }}
+      EXTRA_FEATURES: linux-extra-features
+      # Workaround for secrets not working in conditionals:
+      # https://github.com/actions/runner/issues/520
+      HAS_SECRETS: ${{ secrets.AWS_REGION_NAME != '' }}
+    steps:
+    - uses: actions/checkout@v2
+    - name: Check for warnings
+      run: cargo clippy
+      env:
+        RUSTFLAGS: -D warnings
+    - name: Build the release
+      run: >
+        cargo build --verbose --release --no-default-features
+        --features "${{ matrix.platform.extra_features }}"
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ secrets.AWS_REGION_NAME }}
+      if: ${{ env.HAS_SECRETS == 'true' }}
