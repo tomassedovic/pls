@@ -58,3 +58,6 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ${{ secrets.AWS_REGION_NAME }}
       if: ${{ env.HAS_SECRETS == 'true' }}
+    - name: Deploy the release build
+      run: cargo run --bin deploy
+      #if: ${{ env.HAS_SECRETS == 'true' }}

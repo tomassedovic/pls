@@ -7,6 +7,9 @@ edition = "2021"
 build = "build.rs"
 exclude = ["/test/**", "/venv/**", "/bin/**"]
 
+[[bin]]
+name = "deploy"
+
 # Only compile winres on Windows targets.
 [target.'cfg(windows)'.build-dependencies]
 winres = "0.1"
