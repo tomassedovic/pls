@@ -10,8 +10,10 @@ struct Pls {
 }
 
 impl epi::App for Pls {
-    fn name(&self) -> &str {
-        "pls"
+    fn update(&mut self, ctx: &egui::CtxRef, _frame: &epi::Frame) {
+        egui::CentralPanel::default().show(ctx, |ui| {
+            window::show(&mut self.state, ui);
+        });
     }
 
     fn setup(
@@ -47,10 +49,8 @@ impl epi::App for Pls {
         ctx.set_visuals(theme);
     }
 
-    fn update(&mut self, ctx: &egui::CtxRef, _frame: &epi::Frame) {
-        egui::CentralPanel::default().show(ctx, |ui| {
-            window::show(&mut self.state, ui);
-        });
+    fn name(&self) -> &str {
+        "pls"
     }
 }
 
