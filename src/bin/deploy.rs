@@ -7,5 +7,10 @@ fn main() -> anyhow::Result<()> {
     let rel = dir.join("target").join("release").canonicalize()?;
     println!("Release directory: {}", rel.display());
 
+    let extension = "";
+
+    let release_file = rel.join("pls").with_extension(extension);
+    println!("Release file: {}", release_file.display());
+
     Ok(())
 }
