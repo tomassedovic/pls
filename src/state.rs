@@ -32,81 +32,88 @@ impl State {
         println!("First key: {:?}", first_key);
         let mut version = None;
         let mut ordered_keys = vec![];
-        let mut shows = HashMap::new();
-        for (key, value) in doc.iter() {
-            if value.is_table() {
-                ordered_keys.push(key.to_string());
-                let name = value.get("name").and_then(|v| v.as_str());
-                let dir_default = value.get("directory").and_then(|v| v.as_str());
-                let hostname = hostname::get()
-                    .ok()
-                    .and_then(|cstr| cstr.into_string().ok());
-                let dir_hostname = hostname
-                    .clone()
-                    .and_then(|hostname| value.get(format!("directory_{}", hostname)))
-                    .map(|v| v.as_str())
-                    .unwrap_or(dir_default);
+        // TODO: Load the shows as `*.toml`
+        // Optionally use the `ordering` key to determine order
+        let shows = if let Some(show_dir) = config_path.parent() {
+            State::load_shows(&show_dir)
+        } else {
+            HashMap::default()
+        };
+        //let mut shows = HashMap::new();
+        // for (key, value) in doc.iter() {
+        //     if value.is_table() {
+        //         ordered_keys.push(key.to_string());
+        //         let name = value.get("name").and_then(|v| v.as_str());
+        //         let dir_default = value.get("directory").and_then(|v| v.as_str());
+        //         let hostname = hostname::get()
+        //             .ok()
+        //             .and_then(|cstr| cstr.into_string().ok());
+        //         let dir_hostname = hostname
+        //             .clone()
+        //             .and_then(|hostname| value.get(format!("directory_{}", hostname)))
+        //             .map(|v| v.as_str())
+        //             .unwrap_or(dir_default);
 
-                let name = name.unwrap_or_else(|| {
-                eprintln!(
-                    "Warning: the show doesn't have a `name` set. Using the `key` as fallback: `{}`",
-                    key
-                );
-                key
-            });
-                let next = value.get("next").and_then(|v| v.as_str());
+        //         let name = name.unwrap_or_else(|| {
+        //         eprintln!(
+        //             "Warning: the show doesn't have a `name` set. Using the `key` as fallback: `{}`",
+        //             key
+        //         );
+        //         key
+        //     });
+        //         let next = value.get("next").and_then(|v| v.as_str());
 
-                if let Some(dir) =
-                    dir_hostname.and_then(|dir| PathBuf::from(dir).canonicalize().ok())
-                {
-                    // Fallback to the first file if no `next` key specified:
-                    let next = next.map_or_else(
-                        || {
-                            let first = crate::util::all_files_in_dir(&dir)
-                                .first()
-                                .map(String::from);
-                            eprintln!("Warning: no `next` key specified for show `{}`", key);
-                            println!(
-                                "Falling back to the first file in the directory: `{:?}`.",
-                                first
-                            );
-                            first
-                        },
-                        |s| Some(String::from(s)),
-                    );
+        //         if let Some(dir) =
+        //             dir_hostname.and_then(|dir| PathBuf::from(dir).canonicalize().ok())
+        //         {
+        //             // Fallback to the first file if no `next` key specified:
+        //             let next = next.map_or_else(
+        //                 || {
+        //                     let first = crate::util::all_files_in_dir(&dir)
+        //                         .first()
+        //                         .map(String::from);
+        //                     eprintln!("Warning: no `next` key specified for show `{}`", key);
+        //                     println!(
+        //                         "Falling back to the first file in the directory: `{:?}`.",
+        //                         first
+        //                     );
+        //                     first
+        //                 },
+        //                 |s| Some(String::from(s)),
+        //             );
 
-                    if let Some(next) = next {
-                        let next =
-                            next.replace(&['\\', '/'][..], &std::path::MAIN_SEPARATOR.to_string());
-                        let show = Show {
-                            name: name.into(),
-                            dir,
-                            next: next.into(),
-                        };
-                        shows.insert(key.to_string(), show);
-                    } else {
-                        eprintln!("Error: could not load show `{}`:", key);
-                        eprintln!(
-                            "No `next` key and couldn't load the first show in directory `{}`",
-                            dir.display()
-                        );
-                    }
-                } else {
-                    eprintln!("Error: could not load show `{}`:", key);
-                    if dir_hostname.is_none() {
-                        eprintln!(
-                            "Neither the `directory`, nor `directory_{}` key was specified.",
-                            hostname.unwrap_or_else(|| "hostname".to_string())
-                        );
-                    }
-                }
-            } else if key == "version" {
-                // TODO: Have `version` be a `Result`, record if it's an unexpected type, unknown value or unspecified
-                if let Some(version_str) = value.as_str() {
-                    version = Version::from_str(version_str);
-                }
-            }
-        }
+        //             if let Some(next) = next {
+        //                 let next =
+        //                     next.replace(&['\\', '/'][..], &std::path::MAIN_SEPARATOR.to_string());
+        //                 let show = Show {
+        //                     name: name.into(),
+        //                     dir,
+        //                     next: next.into(),
+        //                 };
+        //                 shows.insert(key.to_string(), show);
+        //             } else {
+        //                 eprintln!("Error: could not load show `{}`:", key);
+        //                 eprintln!(
+        //                     "No `next` key and couldn't load the first show in directory `{}`",
+        //                     dir.display()
+        //                 );
+        //             }
+        //         } else {
+        //             eprintln!("Error: could not load show `{}`:", key);
+        //             if dir_hostname.is_none() {
+        //                 eprintln!(
+        //                     "Neither the `directory`, nor `directory_{}` key was specified.",
+        //                     hostname.unwrap_or_else(|| "hostname".to_string())
+        //                 );
+        //             }
+        //         }
+        //     } else if key == "version" {
+        //         // TODO: Have `version` be a `Result`, record if it's an unexpected type, unknown value or unspecified
+        //         if let Some(version_str) = value.as_str() {
+        //             version = Version::from_str(version_str);
+        //         }
+        //     }
+        // }
 
         let config_version = version.unwrap_or_else(|| {
             let fallback = Version::fallback();
@@ -138,6 +145,15 @@ impl State {
 
     pub fn save_config(&self) {
         let _ = std::fs::write(&self.config_path, self.config.to_string());
+    }
+
+    pub fn load_shows(show_dir: &Path) -> HashMap<String, Show> {
+        let mut shows = HashMap::new();
+        for path_config in show_dir.read_dir().unwrap() {
+            // TODO: skip "pls.toml"
+            dbg!(path_config);
+        }
+        shows
     }
 }
 

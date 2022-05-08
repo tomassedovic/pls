@@ -1,0 +1,3 @@
+name = "Show With A Nested Directory Structure"
+directory = "./test/nested-show"
+next = "S1/S1E1.txt"

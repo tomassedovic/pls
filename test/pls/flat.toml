@@ -1,0 +1,3 @@
+name = "Show With A Flat Directory Structure"
+directory = "./test/flat-show"
+next = "S1E1.txt"
