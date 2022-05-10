@@ -109,7 +109,7 @@ pub fn show(state: &mut State, ui: &mut Ui) {
                         table.insert("next", toml_edit::value(show.next.display().to_string()));
                     }
                     println!("{}", state.config);
-                    state.save_config();
+                    let _ = state.save_config(&state.selected_key);
                 }
             };
             ui.label("Play next episode:");

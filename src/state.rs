@@ -92,8 +92,16 @@ impl State {
         Ok(())
     }
 
-    pub fn save_config(&self) {
-        let _ = std::fs::write(&self.config_path, self.config.to_string());
+    pub fn save_config(&self, key: &str) -> anyhow::Result<()> {
+        if let (Some(show), Some(config_dir)) = (self.shows.get(key), self.config_path.parent()) {
+            let show_path = config_dir.join(format!("{}.{}", key, "toml"));
+            dbg!(&show_path);
+            let toml_src = fs::read_to_string(&show_path)?;
+            let mut doc = toml_src.parse::<Document>()?;
+            doc["next"] = toml_edit::value(show.next.display().to_string());
+            fs::write(&show_path, doc.to_string())?;
+        }
+        Ok(())
     }
 
     pub fn load_shows(show_dir: &Path) -> anyhow::Result<HashMap<String, Show>> {
