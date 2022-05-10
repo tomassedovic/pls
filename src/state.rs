@@ -3,6 +3,7 @@ use crate::show::Show;
 use std::{
     collections::HashMap,
     path::{Path, PathBuf},
+    fmt, fs,
 };
 
 use toml_edit::Document;
@@ -175,8 +176,8 @@ impl Version {
     }
 }
 
-impl std::fmt::Display for Version {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> Result<(), std::fmt::Error> {
+impl fmt::Display for Version {
+    fn fmt(&self, f: &mut fmt::Formatter) -> Result<(), fmt::Error> {
         use Version::*;
         let s = match self {
             V1_0_0 => "1.0.0",
