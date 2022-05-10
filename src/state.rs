@@ -2,8 +2,9 @@ use crate::show::Show;
 
 use std::{
     collections::HashMap,
-    path::{Path, PathBuf},
+    ffi::OsStr,
     fmt, fs,
+    path::{self, Path, PathBuf},
 };
 
 use toml_edit::Document;
@@ -22,99 +23,46 @@ pub struct State {
 
 impl State {
     pub fn new(config_path: &Path) -> Result<Self, anyhow::Error> {
-        let toml = std::fs::read_to_string(config_path)?;
+        let toml = fs::read_to_string(config_path)?;
         let doc = toml.parse::<Document>()?;
-        let first_key = doc
-            .iter()
-            .filter(|(_key, value)| value.is_table())
-            .map(|(key, _series)| key)
-            .next()
+
+        let shows: HashMap<String, Show> = config_path
+            .parent()
+            // TODO: we'll probably want to actually process the `load_shows` error:
+            .and_then(|show_dir| State::load_shows(show_dir).ok())
             .unwrap_or_default();
+        dbg!(&shows);
+
+        // NOTE: Load the `ordering` if it exists in `pls.toml` and
+        // use that as the main order in which the shows are listed.
+        let mut ordered_keys = doc
+            .get("ordering")
+            .and_then(toml_edit::Item::as_array)
+            .map(|a| {
+                a.iter()
+                    .filter_map(|i| i.as_str().map(String::from))
+                    .collect::<Vec<_>>()
+            })
+            .unwrap_or_default();
+        // Since `ordering` is optional and may not contain all (or
+        // any!) of the shows, add in any other shows that we know
+        // about.
+        let mut show_keys = shows.keys().collect::<Vec<_>>();
+        show_keys.sort();
+        for key in show_keys {
+            if !ordered_keys.contains(key) {
+                ordered_keys.push(key.clone());
+            }
+        }
+        dbg!(&ordered_keys);
+
+        let first_key = ordered_keys.first().cloned().unwrap_or_default();
         println!("First key: {:?}", first_key);
-        let mut version = None;
-        let mut ordered_keys = vec![];
-        // TODO: Load the shows as `*.toml`
-        // Optionally use the `ordering` key to determine order
-        let shows = if let Some(show_dir) = config_path.parent() {
-            State::load_shows(&show_dir)
-        } else {
-            HashMap::default()
-        };
-        //let mut shows = HashMap::new();
-        // for (key, value) in doc.iter() {
-        //     if value.is_table() {
-        //         ordered_keys.push(key.to_string());
-        //         let name = value.get("name").and_then(|v| v.as_str());
-        //         let dir_default = value.get("directory").and_then(|v| v.as_str());
-        //         let hostname = hostname::get()
-        //             .ok()
-        //             .and_then(|cstr| cstr.into_string().ok());
-        //         let dir_hostname = hostname
-        //             .clone()
-        //             .and_then(|hostname| value.get(format!("directory_{}", hostname)))
-        //             .map(|v| v.as_str())
-        //             .unwrap_or(dir_default);
 
-        //         let name = name.unwrap_or_else(|| {
-        //         eprintln!(
-        //             "Warning: the show doesn't have a `name` set. Using the `key` as fallback: `{}`",
-        //             key
-        //         );
-        //         key
-        //     });
-        //         let next = value.get("next").and_then(|v| v.as_str());
-
-        //         if let Some(dir) =
-        //             dir_hostname.and_then(|dir| PathBuf::from(dir).canonicalize().ok())
-        //         {
-        //             // Fallback to the first file if no `next` key specified:
-        //             let next = next.map_or_else(
-        //                 || {
-        //                     let first = crate::util::all_files_in_dir(&dir)
-        //                         .first()
-        //                         .map(String::from);
-        //                     eprintln!("Warning: no `next` key specified for show `{}`", key);
-        //                     println!(
-        //                         "Falling back to the first file in the directory: `{:?}`.",
-        //                         first
-        //                     );
-        //                     first
-        //                 },
-        //                 |s| Some(String::from(s)),
-        //             );
-
-        //             if let Some(next) = next {
-        //                 let next =
-        //                     next.replace(&['\\', '/'][..], &std::path::MAIN_SEPARATOR.to_string());
-        //                 let show = Show {
-        //                     name: name.into(),
-        //                     dir,
-        //                     next: next.into(),
-        //                 };
-        //                 shows.insert(key.to_string(), show);
-        //             } else {
-        //                 eprintln!("Error: could not load show `{}`:", key);
-        //                 eprintln!(
-        //                     "No `next` key and couldn't load the first show in directory `{}`",
-        //                     dir.display()
-        //                 );
-        //             }
-        //         } else {
-        //             eprintln!("Error: could not load show `{}`:", key);
-        //             if dir_hostname.is_none() {
-        //                 eprintln!(
-        //                     "Neither the `directory`, nor `directory_{}` key was specified.",
-        //                     hostname.unwrap_or_else(|| "hostname".to_string())
-        //                 );
-        //             }
-        //         }
-        //     } else if key == "version" {
-        //         // TODO: Have `version` be a `Result`, record if it's an unexpected type, unknown value or unspecified
-        //         if let Some(version_str) = value.as_str() {
-        //             version = Version::from_str(version_str);
-        //         }
-        //     }
-        // }
+        let version: Option<Version> = doc
+            .get("version")
+            .and_then(toml_edit::Item::as_str)
+            .and_then(Version::from_str);
 
         let config_version = version.unwrap_or_else(|| {
             let fallback = Version::fallback();
@@ -128,7 +76,7 @@ impl State {
 
         Ok(State {
             config_version,
-            selected_key: first_key.to_string(),
+            selected_key: first_key,
             ordered_keys,
             config_path: config_path.into(),
             config: doc,
@@ -148,14 +96,106 @@ impl State {
         let _ = std::fs::write(&self.config_path, self.config.to_string());
     }
 
-    pub fn load_shows(show_dir: &Path) -> HashMap<String, Show> {
+    pub fn load_shows(show_dir: &Path) -> anyhow::Result<HashMap<String, Show>> {
         let mut shows = HashMap::new();
-        for path_config in show_dir.read_dir().unwrap() {
-            // TODO: skip "pls.toml"
-            dbg!(path_config);
+        for config_path in show_dir.read_dir()? {
+            match config_path {
+                Ok(config_path) => {
+                    if config_path.file_name() == "pls.toml" {
+                        // `pls.toml` is the main application config file,
+                        // rather than a show entry. Don't load it here.
+                        continue;
+                    } else {
+                        dbg!(config_path.path());
+                        // TODO: Err handling
+                        if let Some(key) = config_path.path().file_stem().and_then(os_to_string) {
+                            dbg!(&key);
+                            let _ = Self::load_show(&config_path.path(), &key).map(|show| {
+                                dbg!(&show);
+                                shows.insert(key, show);
+                            });
+                        }
+                    }
+                }
+                Err(error) => {
+                    eprintln!("Error: {:?}", error);
+                }
+            }
         }
-        shows
+
+        Ok(shows)
     }
+
+    pub fn load_show(path: &Path, key: &str) -> anyhow::Result<Show> {
+        let toml = fs::read_to_string(path)?;
+        let doc = toml.parse::<Document>()?;
+        let name = doc.get("name").and_then(|v| v.as_str());
+        let dir_default = doc.get("directory").and_then(|v| v.as_str());
+        let hostname = hostname::get()
+            .ok()
+            .and_then(|cstr| cstr.into_string().ok());
+        let dir_hostname = hostname
+            .clone()
+            .and_then(|hostname| doc.get(&format!("directory_{}", hostname)))
+            .map(|v| v.as_str())
+            .unwrap_or(dir_default);
+
+        let name = name.unwrap_or_else(|| {
+            eprintln!(
+                "Warning: the show doesn't have a `name` set. Using the `key` as fallback: `{}`",
+                key
+            );
+            key
+        });
+        let next = doc.get("next").and_then(|v| v.as_str());
+
+        if let Some(dir) = dir_hostname.and_then(|dir| PathBuf::from(dir).canonicalize().ok()) {
+            // Fallback to the first file if no `next` key specified:
+            let next = next.map_or_else(
+                || {
+                    let first = crate::util::all_files_in_dir(&dir)
+                        .first()
+                        .map(String::from);
+                    eprintln!("Warning: no `next` key specified for show `{}`", key);
+                    println!(
+                        "Falling back to the first file in the directory: `{:?}`.",
+                        first
+                    );
+                    first
+                },
+                |s| Some(String::from(s)),
+            );
+
+            if let Some(next) = next {
+                let next = next.replace(&['\\', '/'][..], &path::MAIN_SEPARATOR.to_string());
+                return Ok(Show {
+                    name: name.into(),
+                    dir,
+                    next: next.into(),
+                });
+            } else {
+                eprintln!("Error: could not load show `{}`:", key);
+                eprintln!(
+                    "No `next` key and couldn't load the first show in directory `{}`",
+                    dir.display()
+                );
+            }
+        } else {
+            eprintln!("Error: could not load show `{}`:", key);
+            if dir_hostname.is_none() {
+                eprintln!(
+                    "Neither the `directory`, nor `directory_{}` key was specified.",
+                    hostname.unwrap_or_else(|| "hostname".to_string())
+                );
+            }
+        }
+
+        anyhow::bail!("Could not load show! TODO: better error message.")
+    }
+}
+
+pub fn os_to_string<T: AsRef<OsStr>>(os_str: T) -> Option<String> {
+    os_str.as_ref().to_os_string().into_string().ok()
 }
 
 #[derive(Clone, Copy, Debug, PartialEq)]
