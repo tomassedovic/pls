@@ -66,9 +66,8 @@ jobs:
       #if: ${{ env.HAS_SECRETS == 'true' }}
     - name: Upload to the Release page
       uses: softprops/action-gh-release@v1
+      # TODO: zip it up with readme and license?
       with:
         files: |
-          README.md
-          COPYING.txt
-          target/release/pls${{ matrix.platform.exe_extension }}
+          target/release/pls-${{ matrix.platform.target_triple }}${{ matrix.platform.exe_extension }}
       if: startsWith(github.ref, 'refs/tags/')
