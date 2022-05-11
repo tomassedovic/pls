@@ -5,6 +5,8 @@ mod state;
 mod util;
 mod window;
 
+use simplelog::{CombinedLogger, Config, LevelFilter, SharedLogger, SimpleLogger, WriteLogger};
+
 struct Pls {
     state: state::State,
 }
@@ -55,11 +57,26 @@ impl epi::App for Pls {
 }
 
 fn main() -> anyhow::Result<()> {
+    // Set up logging
+    let log_level = LevelFilter::Trace;
+    let mut loggers =
+        vec![SimpleLogger::new(log_level, Config::default()) as Box<dyn SharedLogger>];
+
+    if let Ok(logfile) = std::fs::File::create("pls.log") {
+        loggers.push(WriteLogger::new(log_level, Config::default(), logfile));
+    }
+
+    // NOTE: ignore the loggers if we can't initialise them. The app
+    // should still be able to function.
+    let _ = CombinedLogger::init(loggers);
+
+    log_panics::init();
+
     let qualifier = ""; // NOTE: something like com.mydomain
     let organisation = ""; // NOTE: Try Jumping
     let application = "pls";
 
-    println!("Hostname: {:?}", hostname::get());
+    log::debug!("Hostname: {:?}", hostname::get());
 
     let test_config_dir = std::path::PathBuf::from("test/pls").canonicalize()?;
     let config_dir = if cfg!(feature = "test") {
@@ -71,7 +88,7 @@ fn main() -> anyhow::Result<()> {
     };
     let config_path = config_dir.join("pls.toml");
 
-    println!("Config location: {:?}", config_path);
+    log::info!("Config location: {:?}", config_path);
     let state = state::State::new(&config_path)?;
 
     let app = Pls { state };

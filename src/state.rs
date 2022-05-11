@@ -31,7 +31,7 @@ impl State {
             // TODO: we'll probably want to actually process the `load_shows` error:
             .and_then(|show_dir| State::load_shows(show_dir).ok())
             .unwrap_or_default();
-        dbg!(&shows);
+        log::debug!("Loaded shows: {:#?}", shows);
 
         // NOTE: Load the `ordering` if it exists in `pls.toml` and
         // use that as the main order in which the shows are listed.
@@ -54,10 +54,10 @@ impl State {
                 ordered_keys.push(key.clone());
             }
         }
-        dbg!(&ordered_keys);
+        log::debug!("Ordered keys: {:#?}", ordered_keys);
 
         let first_key = ordered_keys.first().cloned().unwrap_or_default();
-        println!("First key: {:?}", first_key);
+        log::debug!("First key: {:?}", first_key);
 
         let version: Option<Version> = doc
             .get("version")
@@ -66,13 +66,13 @@ impl State {
 
         let config_version = version.unwrap_or_else(|| {
             let fallback = Version::fallback();
-            eprintln!(
-                "Warning: unknown or no config version specified. Falling back to: {}",
+            log::warn!(
+                "Unknown or no config version specified. Falling back to: {}",
                 fallback
             );
             fallback
         });
-        println!("Config version: {}", config_version);
+        log::info!("Config version: {}", config_version);
 
         Ok(State {
             config_version,
@@ -93,9 +93,10 @@ impl State {
     }
 
     pub fn save_config(&self, key: &str) -> anyhow::Result<()> {
+        log::info!("Saving config for show: {key}");
         if let (Some(show), Some(config_dir)) = (self.shows.get(key), self.config_path.parent()) {
             let show_path = config_dir.join(format!("{}.{}", key, "toml"));
-            dbg!(&show_path);
+            log::debug!("Show path: {}", show_path.display());
             let toml_src = fs::read_to_string(&show_path)?;
             let mut doc = toml_src.parse::<Document>()?;
             doc["next"] = toml_edit::value(show.next.display().to_string());
@@ -107,26 +108,28 @@ impl State {
     pub fn load_shows(show_dir: &Path) -> anyhow::Result<HashMap<String, Show>> {
         let mut shows = HashMap::new();
         for config_path in show_dir.read_dir()? {
+            log::debug!("Loading: {:?}", config_path);
             match config_path {
                 Ok(config_path) => {
                     if config_path.file_name() == "pls.toml" {
-                        // `pls.toml` is the main application config file,
-                        // rather than a show entry. Don't load it here.
+                        log::debug!(
+                            "This is the main config file (pls.toml), not a show. Skipping."
+                        );
                         continue;
                     } else {
-                        dbg!(config_path.path());
+                        log::info!("Loading show at path: {}", config_path.path().display());
                         // TODO: Err handling
                         if let Some(key) = config_path.path().file_stem().and_then(os_to_string) {
-                            dbg!(&key);
+                            log::debug!("Show key: {key}");
                             let _ = Self::load_show(&config_path.path(), &key).map(|show| {
-                                dbg!(&show);
+                                log::debug!("Loaded show: {:#?}", show);
                                 shows.insert(key, show);
                             });
                         }
                     }
                 }
                 Err(error) => {
-                    eprintln!("Error: {:?}", error);
+                    log::error!("Error: {:?}", error);
                 }
             }
         }
@@ -149,8 +152,8 @@ impl State {
             .unwrap_or(dir_default);
 
         let name = name.unwrap_or_else(|| {
-            eprintln!(
-                "Warning: the show doesn't have a `name` set. Using the `key` as fallback: `{}`",
+            log::warn!(
+                "The show doesn't have a `name` set. Using the `key` as fallback: `{}`",
                 key
             );
             key
@@ -164,8 +167,8 @@ impl State {
                     let first = crate::util::all_files_in_dir(&dir)
                         .first()
                         .map(String::from);
-                    eprintln!("Warning: no `next` key specified for show `{}`", key);
-                    println!(
+                    log::warn!("No `next` key specified for show `{}`", key);
+                    log::info!(
                         "Falling back to the first file in the directory: `{:?}`.",
                         first
                     );
@@ -182,22 +185,23 @@ impl State {
                     next: next.into(),
                 });
             } else {
-                eprintln!("Error: could not load show `{}`:", key);
-                eprintln!(
+                log::error!("Error: could not load show `{}`:", key);
+                log::error!(
                     "No `next` key and couldn't load the first show in directory `{}`",
                     dir.display()
                 );
             }
         } else {
-            eprintln!("Error: could not load show `{}`:", key);
+            log::error!("Error: could not load show `{}`:", key);
             if dir_hostname.is_none() {
-                eprintln!(
+                log::error!(
                     "Neither the `directory`, nor `directory_{}` key was specified.",
                     hostname.unwrap_or_else(|| "hostname".to_string())
                 );
             }
         }
 
+        // TODO: replace some of the log issues above with bail as well?
         anyhow::bail!("Could not load show! TODO: better error message.")
     }
 }
