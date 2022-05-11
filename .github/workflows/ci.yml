@@ -22,16 +22,19 @@ jobs:
           archive_ext: tar.gz
           extra_features: linux-extra-features
           build_time_dependencies: ""
+          exe_extension: ""
         - os: windows-latest
           target_triple: x86_64-pc-windows-msvc
           archive_ext: zip
           extra_features: windows-extra-features
           build_time_dependencies: ""
+          exe_extension: ".exe"
         - os: macos-latest
           target_triple: x86_64-apple-darwin
           archive_ext: zip
           extra_features: macos-extra-features
           build_time_dependencies: ""
+          exe_extension: ""
     runs-on: ${{ matrix.platform.os }}
 
     env:
@@ -61,3 +64,11 @@ jobs:
     - name: Deploy the release build
       run: cargo run --bin deploy
       #if: ${{ env.HAS_SECRETS == 'true' }}
+    - name: Upload to the Release page
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          README.md
+          COPYING.txt
+          target/release/pls${{ matrix.platform.exe_extension }}
+      if: startsWith(github.ref, 'refs/heads/master')
