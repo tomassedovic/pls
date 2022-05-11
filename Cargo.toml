@@ -5,7 +5,7 @@ authors = ["Tomas Sedovic <tomas@sedovic.cz>"]
 license = "AGPL-3.0-or-later"
 edition = "2021"
 build = "build.rs"
-exclude = ["/test/**", "/venv/**", "/bin/**"]
+exclude = ["/test/**", "/venv/**", "/bin/**", "pls.log"]
 default-run = "pls"
 
 [[bin]]
@@ -23,7 +23,10 @@ egui = { version = "0.16" }
 epi = { version = "0.16" }
 hostname = "0.3"
 humanesort = "0.1.0-alpha"
+log = "0.4.17"
+log-panics = { version = "2.0", features = ["with-backtrace"] }
 opener = "0.5"
+simplelog = { version = "0.12" }
 toml_edit = "0.10"
 
 [features]
