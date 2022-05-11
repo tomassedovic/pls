@@ -22,7 +22,7 @@ pub struct State {
 }
 
 impl State {
-    pub fn new(config_path: &Path) -> Result<Self, anyhow::Error> {
+    pub fn new(config_path: &Path) -> anyhow::Result<Self> {
         let toml = fs::read_to_string(config_path)?;
         let doc = toml.parse::<Document>()?;
 
@@ -86,7 +86,7 @@ impl State {
         })
     }
 
-    pub fn reload_config(&mut self) -> Result<(), anyhow::Error> {
+    pub fn reload_config(&mut self) -> anyhow::Result<()> {
         let new_config = Self::new(&self.config_path)?;
         *self = new_config;
         Ok(())
