@@ -23,6 +23,7 @@ fn main() -> anyhow::Result<()> {
         target_file_name.push_str(&release_suffix);
     }
     if !extension.is_empty() {
+        target_file_name.push('.');
         target_file_name.push_str(extension);
     }
 
