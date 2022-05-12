@@ -38,12 +38,9 @@ jobs:
     runs-on: ${{ matrix.platform.os }}
 
     env:
+      # NOTE: not needed now, but it might simplify the deploy script
       TARGET_TRIPLE: ${{ matrix.platform.target_triple }}
       ARCHIVE_EXT: ${{ matrix.platform.archive_ext }}
-      EXTRA_FEATURES: linux-extra-features
-      # Workaround for secrets not working in conditionals:
-      # https://github.com/actions/runner/issues/520
-      HAS_SECRETS: ${{ secrets.AWS_REGION_NAME != '' }}
     steps:
     - uses: actions/checkout@v2
     - name: Check for warnings
@@ -54,19 +51,11 @@ jobs:
       run: >
         cargo build --verbose --release --no-default-features
         --features "${{ matrix.platform.extra_features }}"
-    - name: Configure AWS Credentials
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ${{ secrets.AWS_REGION_NAME }}
-      if: ${{ env.HAS_SECRETS == 'true' }}
-    - name: Deploy the release build
+    - name: Prepare the release build
+      # TODO: zip it up with readme and license?
       run: cargo run --bin deploy
-      #if: ${{ env.HAS_SECRETS == 'true' }}
     - name: Upload to the Release page
       uses: softprops/action-gh-release@v1
-      # TODO: zip it up with readme and license?
       with:
         files: |
           target/release/pls-${{ matrix.platform.target_triple }}${{ matrix.platform.exe_extension }}
