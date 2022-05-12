@@ -78,7 +78,7 @@ fn main() -> anyhow::Result<()> {
 
     log::debug!("Hostname: {:?}", hostname::get());
 
-    let test_config_dir = std::path::PathBuf::from("test/pls").canonicalize()?;
+    let test_config_dir = std::path::PathBuf::from("test/pls");
     let config_dir = if cfg!(feature = "test") {
         test_config_dir
     } else {
@@ -88,8 +88,10 @@ fn main() -> anyhow::Result<()> {
     };
     let config_path = config_dir.join("pls.toml");
 
+    log::debug!("Current directory: {:?}", std::env::current_dir());
     log::info!("Config location: {:?}", config_path);
-    let state = state::State::new(&config_path)?;
+    let full_config_path = config_path.canonicalize()?;
+    let state = state::State::new(&full_config_path)?;
 
     let app = Pls { state };
     let native_options = egui_glow::NativeOptions {
