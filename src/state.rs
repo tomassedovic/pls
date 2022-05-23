@@ -121,10 +121,11 @@ impl State {
                         // TODO: Err handling
                         if let Some(key) = config_path.path().file_stem().and_then(os_to_string) {
                             log::debug!("Show key: {key}");
-                            let _ = Self::load_show(&config_path.path(), &key).map(|show| {
+                            let res = Self::load_show(&config_path.path(), &key).map(|show| {
                                 log::debug!("Loaded show: {:#?}", show);
                                 shows.insert(key, show);
                             });
+                            log::debug!("Load show result: {:?}", res);
                         }
                     }
                 }
@@ -142,14 +143,17 @@ impl State {
         let doc = toml.parse::<Document>()?;
         let name = doc.get("name").and_then(|v| v.as_str());
         let dir_default = doc.get("directory").and_then(|v| v.as_str());
+        log::debug!("dir_default: {:?}", &dir_default);
         let hostname = hostname::get()
             .ok()
             .and_then(|cstr| cstr.into_string().ok());
+        log::debug!("hostname: {:?}", &hostname);
         let dir_hostname = hostname
             .clone()
             .and_then(|hostname| doc.get(&format!("directory_{}", hostname)))
             .map(|v| v.as_str())
             .unwrap_or(dir_default);
+        log::debug!("dir_hostname: {:?}", &dir_hostname);
 
         let name = name.unwrap_or_else(|| {
             log::warn!(
@@ -185,20 +189,18 @@ impl State {
                     next: next.into(),
                 });
             } else {
-                log::error!("Error: could not load show `{}`:", key);
+                log::error!("Error 1: could not load show `{}`:", key);
                 log::error!(
                     "No `next` key and couldn't load the first show in directory `{}`",
                     dir.display()
                 );
             }
         } else {
-            log::error!("Error: could not load show `{}`:", key);
-            if dir_hostname.is_none() {
-                log::error!(
-                    "Neither the `directory`, nor `directory_{}` key was specified.",
-                    hostname.unwrap_or_else(|| "hostname".to_string())
-                );
-            }
+            log::error!("Error 2: could not load show `{}`:", key);
+            log::error!(
+                "Neither the `directory`, nor `directory_{}` key was specified.",
+                hostname.unwrap_or_else(|| "hostname".to_string())
+            );
         }
 
         // TODO: replace some of the log issues above with bail as well?
