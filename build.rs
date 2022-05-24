@@ -13,4 +13,9 @@ fn set_exe_icon() {
 
 fn main() {
     set_exe_icon();
+
+    // Make sure we build for this version:
+    // NOTE: if you want to change it, update the `osx_minimum_system_version`
+    // field in `Cargo.toml` as well!
+    println!("cargo:rustc-env=MACOSX_DEPLOYMENT_TARGET=10.11");
 }

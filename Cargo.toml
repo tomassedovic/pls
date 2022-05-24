@@ -1,5 +1,6 @@
 [package]
 name = "pls"
+description = "Play a series"
 version = "0.1.0"
 authors = ["Tomas Sedovic <tomas@sedovic.cz>"]
 license = "AGPL-3.0-or-later"
@@ -36,3 +37,15 @@ test = []
 linux-extra-features = []
 macos-extra-features = []
 windows-extra-features = []
+
+[package.metadata.bundle]
+identifier = "cz.sedovic.pls"
+icon = ["assets/base/*.png"]
+copyright = "Copyright (C) 2019-2022 Tomas Sedovic tomas@sedovic.cz AGPLv3+"
+osx_minimum_system_version = "10.11"
+long_description = """
+Keep track of series stored locally.
+
+Play the next episode in the selected series using the application
+associated with the given file.
+"""
