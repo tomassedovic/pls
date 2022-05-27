@@ -1,5 +1,6 @@
 [package]
 name = "pls"
+description = "Play a series"
 version = "0.1.0"
 authors = ["Tomas Sedovic <tomas@sedovic.cz>"]
 license = "AGPL-3.0-or-later"
@@ -28,6 +29,12 @@ log-panics = { version = "2.0", features = ["with-backtrace"] }
 opener = "0.5"
 simplelog = { version = "0.12" }
 toml_edit = "0.10"
+
+# NOTE: these are only used in the deploy script
+# TODO: make them optional and behind features?
+flate2 = "1.0"
+tar = "0.4"
+walkdir = "2.3"
 zip = "0.6.2"
 
 [features]
@@ -36,3 +43,15 @@ test = []
 linux-extra-features = []
 macos-extra-features = []
 windows-extra-features = []
+
+[package.metadata.bundle]
+identifier = "cz.sedovic.pls"
+icon = ["assets/base/*.png"]
+copyright = "Copyright (C) 2019-2022 Tomas Sedovic tomas@sedovic.cz AGPLv3+"
+osx_minimum_system_version = "10.11"
+long_description = """
+Keep track of series stored locally.
+
+Play the next episode in the selected series using the application
+associated with the given file.
+"""
