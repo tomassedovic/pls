@@ -29,6 +29,12 @@ log-panics = { version = "2.0", features = ["with-backtrace"] }
 opener = "0.5"
 simplelog = { version = "0.12" }
 toml_edit = "0.10"
+
+# NOTE: these are only used in the deploy script
+# TODO: make them optional and behind features?
+flate2 = "1.0"
+tar = "0.4"
+walkdir = "2.3"
 zip = "0.6.2"
 
 [features]
