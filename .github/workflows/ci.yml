@@ -20,17 +20,20 @@ jobs:
         - os: ubuntu-latest
           target_triple: x86_64-unknown-linux-gnu
           archive_ext: tar.gz
+          cargo_bundle: false
           extra_features: linux-extra-features
           build_time_dependencies: ""
           exe_extension: ""
         - os: windows-latest
           target_triple: x86_64-pc-windows-msvc
           archive_ext: zip
+          cargo_bundle: false
           extra_features: windows-extra-features
           build_time_dependencies: ""
           exe_extension: ".exe"
         - os: macos-latest
           target_triple: x86_64-apple-darwin
+          cargo_bundle: true
           archive_ext: zip
           extra_features: macos-extra-features
           build_time_dependencies: ""
@@ -38,9 +41,10 @@ jobs:
     runs-on: ${{ matrix.platform.os }}
 
     env:
-      # NOTE: not needed now, but it might simplify the deploy script
+      EXECUTABLE_EXTENSION: ${{ matrix.platform.exe_extension }}
       TARGET_TRIPLE: ${{ matrix.platform.target_triple }}
       ARCHIVE_EXT: ${{ matrix.platform.archive_ext }}
+      CARGO_BUNDLE: ${{ matrix.platform.cargo_bundle }}
     steps:
     - uses: actions/checkout@v2
     - name: Check for warnings
@@ -51,7 +55,15 @@ jobs:
       run: >
         cargo build --verbose --release --no-default-features
         --features "${{ matrix.platform.extra_features }}"
-    - name: Prepare the release build
+    - name: Install cargo bundle
+      run: cargo install cargo-bundle
+      if: ${{ matrix.platform.cargo_bundle }}
+    - name: Create the release bundle
+      run: >
+        cargo bundle --no-default-features --release
+        --features "${{ matrix.platform.extra_features }}"
+      if: ${{ matrix.platform.cargo_bundle }}
+    - name: Package the release
       # TODO: zip it up with readme and license?
       run: cargo run --bin deploy
     - name: Upload to the Release page
