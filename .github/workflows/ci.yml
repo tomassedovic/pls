@@ -65,7 +65,7 @@ jobs:
       if: ${{ matrix.platform.cargo_bundle }}
     - name: Package the release
       # TODO: zip it up with readme and license?
-      run: cargo run --bin deploy
+      run: cargo run --bin deploy --release
     - name: Upload to the Release page
       uses: softprops/action-gh-release@v1
       with:
