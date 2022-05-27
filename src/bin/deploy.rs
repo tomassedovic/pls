@@ -68,13 +68,13 @@ fn main() -> anyhow::Result<()> {
 
     let archive_filename = {
         let mut s = String::from("pls");
-        if !release_suffix.is_empty() {
-            s.push('-');
-            s.push_str(&release_suffix);
-        }
         if !version.is_empty() {
             s.push('-');
             s.push_str(&version);
+        }
+        if !release_suffix.is_empty() {
+            s.push('-');
+            s.push_str(&release_suffix);
         }
         s.push('.');
         s.push_str(&archive_extension);
