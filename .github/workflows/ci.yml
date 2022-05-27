@@ -30,7 +30,7 @@ jobs:
           cargo_bundle: false
           extra_features: windows-extra-features
           build_time_dependencies: ""
-          exe_extension: ".exe"
+          exe_extension: "exe"
         - os: macos-latest
           target_triple: x86_64-apple-darwin
           cargo_bundle: true
