@@ -42,7 +42,15 @@ fn main() -> anyhow::Result<()> {
     let archive_extension = std::env::var("ARCHIVE_EXT").unwrap_or_else(|_| String::from("zip"));
     let release_suffix = std::env::var("TARGET_TRIPLE").unwrap_or_default();
     let cargo_bundle = std::env::var("CARGO_BUNDLE").unwrap_or_default() == "true";
-    let version = std::env::var("VERSION").unwrap_or_default();
+    let version = {
+        let v = std::env::var("VERSION").unwrap_or_default();
+        if v.contains('/') {
+            println!("Warning: unknown version format: '{v}'. Keeping the version empty.");
+            String::new()
+        } else {
+            v
+        }
+    };
 
     let app_build = if cargo_bundle {
         // TODO: handle all bundles, not just the macos app one
