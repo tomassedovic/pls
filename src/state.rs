@@ -4,7 +4,7 @@ use std::{
     collections::HashMap,
     ffi::OsStr,
     fmt, fs,
-    path::{self, Path, PathBuf},
+    path::{Path, PathBuf},
 };
 
 use toml_edit::Document;
@@ -182,7 +182,7 @@ impl State {
             );
 
             if let Some(next) = next {
-                let next = next.replace(&['\\', '/'][..], &path::MAIN_SEPARATOR.to_string());
+                let next = next.replace(&['\\', '/'][..], std::path::MAIN_SEPARATOR_STR);
                 return Ok(Show {
                     name: name.into(),
                     dir,

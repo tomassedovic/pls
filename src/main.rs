@@ -26,6 +26,7 @@ impl epi::App for Pls {
     ) {
         let mut fonts = egui::FontDefinitions::default();
         let font_name = "OpenSans";
+
         fonts.font_data.insert(
             font_name.to_owned(),
             egui::FontData::from_static(include_bytes!("../fonts/OpenSans-Bold.ttf",)),
@@ -92,6 +93,7 @@ fn main() -> anyhow::Result<()> {
     log::info!("Config location: {:?}", config_path);
     let full_config_path = config_path.canonicalize()?;
     let state = state::State::new(&full_config_path)?;
+    log::info!("Config version: {}", state.config_version);
 
     let app = Pls { state };
     let native_options = egui_glow::NativeOptions {
