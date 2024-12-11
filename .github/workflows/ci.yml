@@ -47,7 +47,7 @@ jobs:
       CARGO_BUNDLE: ${{ matrix.platform.cargo_bundle }}
       VERSION: ${{ github.ref_name }}
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
     - name: Check for warnings
       run: cargo clippy
       env:
@@ -67,7 +67,7 @@ jobs:
     - name: Package the release
       run: cargo run --bin deploy --release
     - name: Upload to the Release page
-      uses: softprops/action-gh-release@v1
+      uses: softprops/action-gh-release@v2
       with:
         files: |
           pls-${{ github.ref_name }}-${{ matrix.platform.target_triple }}.${{ matrix.platform.archive_ext }}
