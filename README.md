@@ -4,6 +4,20 @@ A little app that handles a series of files and keeps track of the next one to o
 
 TODO: building instructions, config location. See the `test` folder for sample config files.
 
+## Building the MacOS app
+
+First, install `cargo-bundle`:
+
+    $ cargo install cargo-bundle
+
+Then run:
+
+    $ cargo bundle --release
+
+The resulting `pls.app` file will be available at:
+
+    target/release/bundle/osx/pls.app
+
 ## License
 
 ### Code (AGPLv3 or later)

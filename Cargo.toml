@@ -26,7 +26,7 @@ hostname = "0.3"
 humanesort = "0.1.0-alpha"
 log = "0.4.17"
 log-panics = { version = "2.0", features = ["with-backtrace"] }
-opener = "0.5"
+opener = "0.7"
 simplelog = { version = "0.12" }
 toml_edit = "0.10"
 
@@ -48,7 +48,7 @@ windows-extra-features = []
 identifier = "cz.sedovic.pls"
 icon = ["assets/base/*.png"]
 copyright = "Copyright (C) 2019-2022 Tomas Sedovic tomas@sedovic.cz AGPLv3+"
-osx_minimum_system_version = "10.11"
+osx_minimum_system_version = "10.12"
 long_description = """
 Keep track of series stored locally.
 
