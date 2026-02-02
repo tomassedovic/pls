@@ -28,11 +28,10 @@ pub fn show(state: &mut State, ui: &mut Ui) {
                         }
                     };
 
-                    if c[2].button("Reload").clicked() {
-                        if let Err(error) = state.reload_config() {
+                    if c[2].button("Reload").clicked()
+                        && let Err(error) = state.reload_config() {
                             state.error = Some(format!("Error reloading the config:\n{}", error));
                         }
-                    }
                 });
             });
 
