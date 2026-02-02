@@ -12,7 +12,7 @@ First, install `cargo-bundle`:
 
 Then run:
 
-    $ cargo bundle --release
+	$ cargo bundle --release --bin pls --no-default-features
 
 The resulting `pls.app` file will be available at:
 
