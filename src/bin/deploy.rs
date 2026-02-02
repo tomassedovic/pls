@@ -114,7 +114,7 @@ fn main() -> anyhow::Result<()> {
         }
         zip.finish()?;
     } else if archive_extension == "tar.gz" {
-        use flate2::{write::GzEncoder, Compression};
+        use flate2::{Compression, write::GzEncoder};
 
         let tarfile = File::create(&archive_filename)?;
         let encoder = GzEncoder::new(tarfile, Compression::default());

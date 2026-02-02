@@ -32,10 +32,11 @@ impl Show {
         let current_episode = self.current_episode();
         let current_episode_index = eps.iter().position(|episode| episode == &current_episode);
         if let Some(index) = current_episode_index
-            && index > 0 {
-                let previous_episode = &eps[index - 1];
-                return Some(self.dir.join(previous_episode));
-            }
+            && index > 0
+        {
+            let previous_episode = &eps[index - 1];
+            return Some(self.dir.join(previous_episode));
+        }
         None
     }
 
